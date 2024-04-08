@@ -1,3 +1,6 @@
+create database if not exists WarehouseSystem
+use WarehouseSystem;
+
 -- This table details all information about inventory on a unit-to-unit basis (or group of units if applicable)
 create table Item (
     itemID int not null, -- The main identifying ID number for an item
