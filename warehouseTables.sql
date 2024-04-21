@@ -43,7 +43,7 @@ create table Orders (
     orderID int not null,
     orderStatus varchar(99) not null, -- Gives status of order, such as shipped, delivered, in process, etc.
     departureTime date, -- States when the order left the warehouse
-    deliveryAddress varchar(999), -- Gives full delivery location information
+    deliveryAddress TEXT, -- Gives full delivery location information
     handlerID int not null, -- Gives ID of employee/service handling the order
     primary key (orderID)
 );
