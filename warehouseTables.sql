@@ -53,7 +53,7 @@ create table if not exists WarehouseItemQuantity (
     warehouseID int not null,
     itemID int not null,
     itemQuantity int not null, -- Gives total count of each item in each warehouse
-    foreign key (itemName) references Item(itemName),
+    foreign key (itemID) references Item(itemID),
     foreign key (warehouseID) references Warehouse(warehouseID)
 );
 
@@ -78,7 +78,7 @@ create table if not exists Employee (
 ) AUTO_INCREMENT=1000;
 
 -- This table stores the login information to access the system
-create table Login (
+create table if not exists Login (
     username varchar(99) not null,
     hashedPassword varchar(256) not null, -- For security purposes, we store the hashed password
     employeeID int not null,
