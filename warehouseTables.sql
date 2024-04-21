@@ -22,7 +22,7 @@ create table ItemQuantity (
     warehouseID int not null,
     itemName varchar(99) not null,
     itemQuantity int not null, -- Gives total count of each item in each warehouse
-    foreign key (itemName) references Item(itemName)
+    foreign key (itemName) references Item(itemName),
     foreign key (warehouseID) references Warehouse(warehouseID)
 );
 
