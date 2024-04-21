@@ -1,4 +1,4 @@
-create database if not exists WarehouseSystem
+create database if not exists WarehouseSystem;
 use WarehouseSystem;
 
 -- This table details all information about inventory on a unit-to-unit basis (or group of units if applicable)
@@ -12,9 +12,9 @@ create table Item (
     orderID int, -- If the item is ordered, give the orderID
     warehouseID int not null, -- Details which warehouse the item belongs in
     itemLocation varchar(99) not null, -- Says where in the warehouse the item is stored in
-    primary key (itemID)
-    foreign key (warehouseID) references Warehouse(warehouseID)
-    foreign key (orderID) references Orders
+    primary key (itemID),
+    foreign key (warehouseID) references Warehouse(warehouseID),
+    foreign key (orderID) references Orders(orderID)
 );
 
 -- This table shows how much of each item is present in each warehouse
@@ -40,8 +40,8 @@ create table Warehouse (
 
 -- This table details order information based on items
 create table Orders (
-    orderID int not null;
-    orderStatus varchar(99) not null -- Gives status of order, such as shipped, delivered, in process, etc.
+    orderID int not null,
+    orderStatus varchar(99) not null, -- Gives status of order, such as shipped, delivered, in process, etc.
     departureTime date, -- States when the order left the warehouse
     deliveryAddress varchar(999), -- Gives full delivery location information
     handlerID int not null, -- Gives ID of employee/service handling the order
@@ -63,5 +63,5 @@ create table Employee (
 create table Login (
     username varchar(99) not null,
     hashedPassword varchar(256) not null, -- For security purposes, we store the hashed password
-    employeeID not null
+    employeeID int not null
 );
