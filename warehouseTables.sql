@@ -25,8 +25,8 @@ create table if not exists Warehouse (
 create table if not exists Item (
     itemID int not null AUTO_INCREMENT, -- The main identifying ID number for an item
     itemName varchar(99) not null, -- The name of the item
-    itemWeight int not null, -- Gives weight of unit or group of units in pounds
-    itemPrice int not null, -- Gives price of each unit/group unit
+    itemWeight float not null, -- Gives weight of unit or group of units in pounds
+    itemPrice float not null, -- Gives price of each unit/group unit
     primary key (itemID)
 );
 
