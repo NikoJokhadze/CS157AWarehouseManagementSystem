@@ -1,14 +1,13 @@
 import mysql.connector
 from mysql.connector import errorcode
 from flask import Flask, jsonify, request
+from getpass import getpass
 
+app = Flask(__name__)
 try:  # Surrounding the connection in a try-except block to catch all connection errors
-    databaseConnection = mysql.connector.connect(  # Connection happens here
-        host="localhost",
-        user="root",
-        password="NikoMySQL_13",
-        database="warehousesystem"
-    )
+    password = getpass("Enter your password for MySQL: ")
+    conn = mysql.connector.connect(user="root", password=password,
+                                   host='127.0.0.1', database="hw3_tables")
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:  # If the username or password is wrong, it's caught here
         print("Error: your username or password are incorrect")
@@ -17,7 +16,7 @@ except mysql.connector.Error as err:
     else:
         print(err)  # If the hostname is entered incorrectly, it's caught here
 
-print(databaseConnection)  # Printing the successful connection
+print(conn)  # Printing the successful connection
 
 
 app = Flask(__name__)
