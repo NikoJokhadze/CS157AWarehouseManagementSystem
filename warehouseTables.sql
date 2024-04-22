@@ -15,10 +15,33 @@ create table if not exists Addresses (
 -- This table shows the warehouse information, meant for if a service owns multiple warehouses
 create table if not exists Warehouse (
     warehouseID int not null,
-    capacity varchar(99) not null, -- Gives info on total capacity of warehouse
     warehouseAddressID int not null,
+    capacity varchar(99) not null, -- Gives info on total capacity of warehouse
     primary key (warehouseID),
     foreign key (warehouseAddressID) references Addresses(addressID)
+);
+
+-- This table details all information about inventory on a unit-to-unit basis (or group of units if applicable)
+create table if not exists Item (
+    itemID int not null AUTO_INCREMENT, -- The main identifying ID number for an item
+    itemName varchar(99) not null, -- The name of the item
+    itemWeight int not null, -- Gives weight of unit or group of units in some number of some scale, decide weight scale later
+    itemPrice int not null, -- Gives price of each unit/group unit
+    arrivalTime date, -- Says when the item arrived at the warehouse
+    itemStatus varchar(99) not null, -- Tells if the item is ordered/in stock/out of stock
+    warehouseID int not null, -- Details which warehouse the item belongs in
+    itemLocation varchar(99) not null, -- Says where in the warehouse the item is stored in
+    primary key (itemID),
+    foreign key (warehouseID) references Warehouse(warehouseID)
+);
+
+-- This table shows how much of each item is present in each warehouse
+create table if not exists WarehouseItemQuantity (
+    warehouseID int not null,
+    itemID int not null,
+    itemQuantity int not null, -- Gives total count of each item in each warehouse
+    foreign key (itemID) references Item(itemID),
+    foreign key (warehouseID) references Warehouse(warehouseID)
 );
 
 -- This table details order information based on items
@@ -30,31 +53,6 @@ create table if not exists Orders (
     handlerID int not null, -- Gives ID of employee/service handling the order
     primary key (orderID),
     foreign key (deliveryAddressID) references Addresses(addressID)
-);
-
--- This table details all information about inventory on a unit-to-unit basis (or group of units if applicable)
-create table if not exists Item (
-    itemID int not null AUTO_INCREMENT, -- The main identifying ID number for an item
-    itemName varchar(99) not null, -- The name of the item
-    itemWeight int not null, -- Gives weight of unit or group of units in some number of some scale, decide weight scale later
-    itemPrice int not null, -- Gives price of each unit/group unit
-    arrivalTime date, -- Says when the item arrived at the warehouse
-    itemStatus varchar(99) not null, -- Tells if the item is ordered/in stock/out of stock
-    orderID int, -- If the item is ordered, give the orderID
-    warehouseID int not null, -- Details which warehouse the item belongs in
-    itemLocation varchar(99) not null, -- Says where in the warehouse the item is stored in
-    primary key (itemID),
-    foreign key (warehouseID) references Warehouse(warehouseID),
-    foreign key (orderID) references Orders(orderID)
-);
-
--- This table shows how much of each item is present in each warehouse
-create table if not exists WarehouseItemQuantity (
-    warehouseID int not null,
-    itemID int not null,
-    itemQuantity int not null, -- Gives total count of each item in each warehouse
-    foreign key (itemID) references Item(itemID),
-    foreign key (warehouseID) references Warehouse(warehouseID)
 );
 
 -- This table shows how many of each item is in an order
