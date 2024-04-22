@@ -25,23 +25,22 @@ create table if not exists Warehouse (
 create table if not exists Item (
     itemID int not null AUTO_INCREMENT, -- The main identifying ID number for an item
     itemName varchar(99) not null, -- The name of the item
-    itemWeight int not null, -- Gives weight of unit or group of units in some number of some scale, decide weight scale later
+    itemWeight int not null, -- Gives weight of unit or group of units in pounds
     itemPrice int not null, -- Gives price of each unit/group unit
-    arrivalTime date, -- Says when the item arrived at the warehouse
-    itemStatus varchar(99) not null, -- Tells if the item is ordered/in stock/out of stock
-    warehouseID int not null, -- Details which warehouse the item belongs in
-    itemLocation varchar(99) not null, -- Says where in the warehouse the item is stored in
-    primary key (itemID),
-    foreign key (warehouseID) references Warehouse(warehouseID)
+    primary key (itemID)
 );
 
--- This table shows how much of each item is present in each warehouse
-create table if not exists WarehouseItemQuantity (
-    warehouseID int not null,
+-- This table stores information for items in case the same item is stored in multiple warehouses
+-- as well as quantity of each item
+create table if not exists ItemInWarehouse (
+    warehouseID int not null, -- Details which warehouse the item belongs in
     itemID int not null,
-    itemQuantity int not null, -- Gives total count of each item in each warehouse
-    foreign key (itemID) references Item(itemID),
-    foreign key (warehouseID) references Warehouse(warehouseID)
+    arrivalTime date, -- Says when the item arrived at the warehouse
+    itemStatus varchar(99) not null, -- Tells if the item is in stock/out of stock
+    itemLocation varchar(99) not null, -- Says where in the warehouse the item is stored in
+    itemQuantity int not null default 0, -- Gives number of items in warehouse. We assume that all are in same location
+    foreign key (warehouseID) references Warehouse(warehouseID),
+    foreign key (itemID) references Item(itemID)
 );
 
 -- This table details order information based on items
