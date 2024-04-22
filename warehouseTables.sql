@@ -5,8 +5,8 @@ use WarehouseSystem;
 create table if not exists Addresses (
     addressID int not null, -- Each address will be associated with a unique ID
     addressNum int not null,
-    city varchar(99) not null,
     street varchar(99) not null,
+    city varchar(99) not null,
     zipCode int not null,
     warehouse bool not null, -- Determines whether this address is a warehouse address or delivery address
     primary key (addressID)
@@ -16,7 +16,7 @@ create table if not exists Addresses (
 create table if not exists Warehouse (
     warehouseID int not null,
     warehouseAddressID int not null,
-    capacity varchar(99) not null, -- Gives info on total capacity of warehouse
+    capacity int not null, -- Gives info on total capacity of warehouse in square feet
     primary key (warehouseID),
     foreign key (warehouseAddressID) references Addresses(addressID)
 );
@@ -47,7 +47,7 @@ create table if not exists WarehouseItemQuantity (
 -- This table details order information based on items
 create table if not exists Orders (
     orderID int not null AUTO_INCREMENT,
-    orderStatus varchar(99) not null, -- Gives status of order, such as shipped, delivered, in process, etc.
+    orderStatus varchar(99) not null, -- Gives status of order, such as received, shipped, delivered
     departureTime date, -- States when the order left the warehouse
     deliveryAddressID int not null, -- Gives full delivery location information
     handlerID int not null, -- Gives ID of employee/service handling the order
