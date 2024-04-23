@@ -18,5 +18,6 @@ except mysql.connector.Error as err:
 
 print(conn)  # Printing the successful connection
 
+# URL Template: "/<table_name>/<function>/<item_or_order_number> (if needed)
 
 app = Flask(__name__)
