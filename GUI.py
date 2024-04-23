@@ -52,12 +52,15 @@ def main():
     orders_button = Button(mainFrame, text="Orders",
                            command=lambda: [ordersFrame.grid(),mainFrame.grid_forget()], font=("Arial", 20))
     orders_button.grid(row=0, column=0, pady=(25, 0))
+
     warehouses_button = Button(mainFrame, text="Warehouses",
                                command=lambda: [warehousesFrame.grid(),mainFrame.grid_forget()], font=("Arial", 20))
     warehouses_button.grid(row=1, column=0, pady=(50, 0))
+
     items_button = Button(mainFrame, text="Items",
                           command=lambda: [itemsFrame.grid(),mainFrame.grid_forget()], font=("Arial", 20))
     items_button.grid(row=2, column=0, pady=(50, 0))
+
     employees_button = Button(mainFrame, text="Employees",
                               command=lambda: [employeesFrame.grid(),mainFrame.grid_forget()], font=("Arial", 20))
     employees_button.grid(row=3, column=0, pady=(50, 0))
