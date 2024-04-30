@@ -170,6 +170,65 @@ def get_items():
         return jsonify(data), 200
 
 
+@app.route('/item/create_item', methods=['POST'])
+def insert_item():
+    data = request.json
+    itemName = data[0]
+    itemWeight = data[1]
+    itemPrice = data[2]
+
+    if itemName is None or itemWeight is None or itemPrice is None:
+        return jsonify({'message': 'To insert a new item, you must provide the itemID, itemWeight, and itemPrice'}), 400
+
+    try:
+        cursor = conn.cursor()
+
+        insert_query = "Insert into Item (itemName, itemWeight, itemPrice) values (%s, %s, %s)"
+        cursor.execute(insert_query, (itemName, itemWeight, itemPrice))
+        conn.commit()
+        return jsonify({'message': 'Data added successfully'}), 201
+    except Exception as e:
+        return jsonify({'message': 'Failed to add data', 'error': str(e)}), 500
+    finally:
+        cursor.close()
+
+
+@app.route('/warehouse/add_items', methods=['POST'])
+def insert_items_in_warehouse():
+    data = request.json
+    warehouseID = data[0]
+    itemID = data[1]
+    arrivalTime = data[2]
+    itemStatus = data[3]
+    itemLocation = data[4]
+    itemQuantity = data[5]
+
+    if warehouseID is None or itemID is None or arrivalTime is None or itemStatus is None\
+            or itemLocation is None or itemQuantity is None:
+        return jsonify({'message': 'To insert an item in a warehouse, you must provide the itemID, the arrival time, '
+                                   'the item status, the location in the warehouse, and the total quantity to place'
+                                   'in the warehouse.'}), 400
+
+    try:
+        cursor = conn.cursor()
+
+        # The following few lines checks to see if the itemID exists in the Item table
+        cursor.execute("SELECT * FROM Item WHERE itemID = %s", (itemID,))
+        item = cursor.fetchone()
+        if item is None:
+            return jsonify({'message': f'Item with ID {itemID} does not exist in the Item table.'}), 404
+
+        insert_query = ("Insert into ItemInWarehouse (warehouseID, itemID, arrivalTime, itemStatus, itemLocation, "
+                        "itemQuantity) values (%s, %s, %s, %s, %s, %s)")
+        cursor.execute(insert_query, (warehouseID, itemID, arrivalTime, itemStatus, itemLocation, itemQuantity))
+        conn.commit()
+        return jsonify({'message': 'Data added successfully'}), 201
+    except Exception as e:
+        return jsonify({'message': 'Failed to add data', 'error': str(e)}), 500
+    finally:
+        cursor.close()
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=105, debug=True)
 
