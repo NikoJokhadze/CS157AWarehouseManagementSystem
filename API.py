@@ -5,8 +5,8 @@ from getpass import getpass
 
 
 try:  # Surrounding the connection in a try-except block to catch all connection errors
-    password = getpass("Enter your password for MySQL: ")
-    conn = mysql.connector.connect(user="root", password=password,
+    #password = getpass("Enter your password for MySQL: ")
+    conn = mysql.connector.connect(user="root", password="NikoMySQL_13",
                                    host='127.0.0.1', database="WarehouseSystem")
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:  # If the username or password is wrong, it's caught here
@@ -161,7 +161,7 @@ def get_items():
     else:
         # The following command will get all ordered items and display the total amount of those items that are
         # on order status across all orders
-        cursor.execute("SELECT i.itemName, SUM(o.itemQuantity) AS totalQuantity "
+        cursor.execute("SELECT i.itemName, SUM(o.itemQuantity) AS totalCountOrdered"
                        "FROM Item i INNER JOIN ItemsOrdered o "
                        "ON i.itemID = o.itemID "
                        "GROUP BY itemName")
@@ -227,6 +227,62 @@ def insert_items_in_warehouse():
         return jsonify({'message': 'Failed to add data', 'error': str(e)}), 500
     finally:
         cursor.close()
+
+
+@app.route("/item/get_items_by_warehouse", methods=['GET'])
+def get_items_by_warehouse():
+    data = request.json
+    warehouseID = data[0]
+
+    if warehouseID is None:
+        return jsonify({'message': 'Must enter warehouse ID to search by warehouse.'}), 400
+
+    cursor = conn.cursor()
+    cursor.execute("SELECT w.warehouseID, i.itemID, i.itemName, i.itemWeight, i.itemPrice, w.itemQuantity "
+                   "FROM Item i INNER JOIN ItemInWarehouse w ON i.itemID = w.itemID "
+                   "WHERE warehouseID = %s", (warehouseID,))
+    data = cursor.fetchall()
+    if len(data) == 0:
+        return jsonify({'message': "There are no items in this warehouse."})
+    else:
+        # The following command will get all ordered items and display the total amount of those items that are
+        # on order status across all orders
+        cursor.execute("SELECT i.itemName, w.warehouseID, SUM(o.itemQuantity) as totalCountOrdered "
+                       "FROM Item i INNER JOIN ItemsOrdered o ON i.itemID = o.itemID "
+                       "INNER JOIN ItemInWarehouse w ON w.itemID = o.itemID "
+                       "WHERE warehouseID = %s "
+                       "GROUP BY itemName", (warehouseID,))
+        data += cursor.fetchall()
+        cursor.close()
+        return jsonify(data), 200
+
+
+@app.route("/item/get_items_by_name", methods=['GET'])
+def get_items_by_name():
+    data = request.json
+    itemName = data[0]
+
+    if itemName is None:
+        return jsonify({'message': 'Must enter item name to search by item.'}), 400
+
+    cursor = conn.cursor()
+    cursor.execute("SELECT i.itemID, i.itemName, i.itemWeight, i.itemPrice, w.itemQuantity, w.warehouseID "
+                   "FROM Item i INNER JOIN ItemInWarehouse w ON i.itemID = w.itemID "
+                   "WHERE itemName = %s", (itemName,))
+    data = cursor.fetchall()
+    if len(data) == 0:
+        return jsonify({'message': "There are no items by this name."})
+    else:
+        # The following command will get all ordered items and display the total amount of those items that are
+        # on order status across all orders
+        cursor.execute("SELECT i.itemName, SUM(o.itemQuantity) AS totalCountOrdered"
+                       "FROM Item i INNER JOIN ItemsOrdered o "
+                       "ON i.itemID = o.itemID "
+                       "WHERE itemName = %s "
+                       "GROUP BY itemName", (itemName,))
+        data += cursor.fetchall()
+        cursor.close()
+        return jsonify(data), 200
 
 
 if __name__ == '__main__':
