@@ -27,7 +27,7 @@ def get_users():
     data = cursor.fetchall()
     cursor.close()
     if len(data) == 0:
-        return jsonify({'message': "There are no tasks for all users."})
+        return jsonify({'message': "There are no information on employees. Please make sure the data is added."})
     else:
         return jsonify(data), 200
 
@@ -61,6 +61,45 @@ def create_user():
     except Exception as e:
         return jsonify({"message": f"Failed to create a new user for {new_first} {new_last}", "error": str(e)}), 500
 
+
+@app.route("/login/update_username/<string:curr_user>", method=['POST'])
+def update_username(curr_user):
+    cursor = conn.cursor()
+    data = request.json
+    new_username = data.get('new_username')
+    if new_username is None:
+        return jsonify({'message': 'New Username is a required field!'}), 400
+    try:
+        cursor.execute("UPDATE Login SET username = %s WHERE username = %s", (new_username, curr_user))
+        conn.commit()
+        return jsonify({"message": f"Username is changed successfully to {new_username}"}), 201
+    except Exception as e:
+        return jsonify(
+            {"message": f"Failed to change the username to {new_username}", "error": str(e)}), 500
+    finally:
+        cursor.close()
+
+
+@app.route("/login/update_password/<string:curr_user>", method=['POST'])
+def update_username(curr_user):
+    cursor = conn.cursor()
+    data = request.json
+    old_password = data.get('old_password')
+    new_password = data.get('new_password')
+    if old_password is None:
+        return jsonify({'message': 'Old password is a required field!'}), 400
+    elif new_password is None:
+        return jsonify({'message': 'New password is a required field!'}), 400
+    try:
+        cursor.execute("UPDATE Login SET hashedPassword = %s WHERE username = %s and hashedPassword = %s",
+                       (new_password, curr_user, old_password))
+        conn.commit()
+        return jsonify({"message": f"Username is changed successfully to {new_password}"}), 201
+    except Exception as e:
+        return jsonify(
+            {"message": f"Failed to change the username to {new_password}", "error": str(e)}), 500
+    finally:
+        cursor.close()
 
 @app.route("/warehouse/get_warehouses", methods=['GET'])
 def get_warehouses():
