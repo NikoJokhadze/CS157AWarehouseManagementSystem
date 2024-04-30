@@ -20,6 +20,7 @@ print(conn)  # Printing the successful connection
 
 app = Flask(__name__)
 
+
 @app.route("/employee/get_all", methods=['GET'])
 def get_users():
     cursor = conn.cursor()
@@ -62,7 +63,7 @@ def create_user():
         return jsonify({"message": f"Failed to create a new user for {new_first} {new_last}", "error": str(e)}), 500
 
 
-@app.route("/login/update_username/<string:curr_user>", method=['POST'])
+@app.route("/login/update_username/<string:curr_user>", method=['PUT'])
 def update_username(curr_user):
     cursor = conn.cursor()
     data = request.json
@@ -80,7 +81,7 @@ def update_username(curr_user):
         cursor.close()
 
 
-@app.route("/login/update_password/<string:curr_user>", method=['POST'])
+@app.route("/login/update_password/<string:curr_user>", method=['PUT'])
 def update_username(curr_user):
     cursor = conn.cursor()
     data = request.json
@@ -100,6 +101,24 @@ def update_username(curr_user):
             {"message": f"Failed to change the username to {new_password}", "error": str(e)}), 500
     finally:
         cursor.close()
+
+
+@app.route('/employee/delete_employee/<string:username>', method=['DELETE'])
+def delete_user(username):
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT employeeID from Login WHERE username=%s", username)
+        id_res = cursor.fetchone()
+        delete_id = id_res[0]
+        cursor.execute("DELETE FROM Login WHERE username=%s", username)
+        cursor.execute("DELETE FROM Employee WHERE employeeID=%s", delete_id)
+        conn.commit()
+        return jsonify({"message": 'User deleted successfully!'})
+    except Exception as err:
+        return jsonify({"message": f"Failed to delete user {username}", "error": str(err)}), 500
+    finally:
+        cursor.close()
+
 
 @app.route("/warehouse/get_warehouses", methods=['GET'])
 def get_warehouses():
