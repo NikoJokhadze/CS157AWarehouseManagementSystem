@@ -5,8 +5,8 @@ from getpass import getpass
 
 
 try:  # Surrounding the connection in a try-except block to catch all connection errors
-    password = getpass("Enter your password for MySQL: ")
-    conn = mysql.connector.connect(user="root", password=password,
+    #password = getpass("Enter your password for MySQL: ")
+    conn = mysql.connector.connect(user="root", password="NikoMySQL_13",
                                    host='127.0.0.1', database="WarehouseSystem")
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:  # If the username or password is wrong, it's caught here
@@ -200,10 +200,125 @@ def get_items():
     else:
         # The following command will get all ordered items and display the total amount of those items that are
         # on order status across all orders
-        cursor.execute("SELECT i.itemName, SUM(o.itemQuantity) AS totalQuantity "
+        cursor.execute("SELECT i.itemName, SUM(o.itemQuantity) AS totalCountOrdered"
                        "FROM Item i INNER JOIN ItemsOrdered o "
                        "ON i.itemID = o.itemID "
                        "GROUP BY itemName")
+        data += cursor.fetchall()
+        cursor.close()
+        return jsonify(data), 200
+
+
+@app.route('/item/create_item', methods=['POST'])
+def insert_item():
+    data = request.json
+    itemName = data[0]
+    itemWeight = data[1]
+    itemPrice = data[2]
+
+    if itemName is None or itemWeight is None or itemPrice is None:
+        return jsonify({'message': 'To insert a new item, you must provide the itemID, itemWeight, and itemPrice'}), 400
+
+    try:
+        cursor = conn.cursor()
+
+        insert_query = "Insert into Item (itemName, itemWeight, itemPrice) values (%s, %s, %s)"
+        cursor.execute(insert_query, (itemName, itemWeight, itemPrice))
+        conn.commit()
+        return jsonify({'message': 'Data added successfully'}), 201
+    except Exception as e:
+        return jsonify({'message': 'Failed to add data', 'error': str(e)}), 500
+    finally:
+        cursor.close()
+
+
+@app.route('/warehouse/add_items', methods=['POST'])
+def insert_items_in_warehouse():
+    data = request.json
+    warehouseID = data[0]
+    itemID = data[1]
+    arrivalTime = data[2]
+    itemStatus = data[3]
+    itemLocation = data[4]
+    itemQuantity = data[5]
+
+    if warehouseID is None or itemID is None or arrivalTime is None or itemStatus is None\
+            or itemLocation is None or itemQuantity is None:
+        return jsonify({'message': 'To insert an item in a warehouse, you must provide the itemID, the arrival time, '
+                                   'the item status, the location in the warehouse, and the total quantity to place'
+                                   'in the warehouse.'}), 400
+
+    try:
+        cursor = conn.cursor()
+
+        # The following few lines checks to see if the itemID exists in the Item table
+        cursor.execute("SELECT * FROM Item WHERE itemID = %s", (itemID,))
+        item = cursor.fetchone()
+        if item is None:
+            return jsonify({'message': f'Item with ID {itemID} does not exist in the Item table.'}), 404
+
+        insert_query = ("Insert into ItemInWarehouse (warehouseID, itemID, arrivalTime, itemStatus, itemLocation, "
+                        "itemQuantity) values (%s, %s, %s, %s, %s, %s)")
+        cursor.execute(insert_query, (warehouseID, itemID, arrivalTime, itemStatus, itemLocation, itemQuantity))
+        conn.commit()
+        return jsonify({'message': 'Data added successfully'}), 201
+    except Exception as e:
+        return jsonify({'message': 'Failed to add data', 'error': str(e)}), 500
+    finally:
+        cursor.close()
+
+
+@app.route("/item/get_items_by_warehouse", methods=['GET'])
+def get_items_by_warehouse():
+    data = request.json
+    warehouseID = data[0]
+
+    if warehouseID is None:
+        return jsonify({'message': 'Must enter warehouse ID to search by warehouse.'}), 400
+
+    cursor = conn.cursor()
+    cursor.execute("SELECT w.warehouseID, i.itemID, i.itemName, i.itemWeight, i.itemPrice, w.itemQuantity "
+                   "FROM Item i INNER JOIN ItemInWarehouse w ON i.itemID = w.itemID "
+                   "WHERE warehouseID = %s", (warehouseID,))
+    data = cursor.fetchall()
+    if len(data) == 0:
+        return jsonify({'message': "There are no items in this warehouse."})
+    else:
+        # The following command will get all ordered items and display the total amount of those items that are
+        # on order status across all orders
+        cursor.execute("SELECT i.itemName, w.warehouseID, SUM(o.itemQuantity) as totalCountOrdered "
+                       "FROM Item i INNER JOIN ItemsOrdered o ON i.itemID = o.itemID "
+                       "INNER JOIN ItemInWarehouse w ON w.itemID = o.itemID "
+                       "WHERE warehouseID = %s "
+                       "GROUP BY itemName", (warehouseID,))
+        data += cursor.fetchall()
+        cursor.close()
+        return jsonify(data), 200
+
+
+@app.route("/item/get_items_by_name", methods=['GET'])
+def get_items_by_name():
+    data = request.json
+    itemName = data[0]
+
+    if itemName is None:
+        return jsonify({'message': 'Must enter item name to search by item.'}), 400
+
+    cursor = conn.cursor()
+    cursor.execute("SELECT i.itemID, i.itemName, i.itemWeight, i.itemPrice, w.itemQuantity, w.warehouseID "
+                   "FROM Item i INNER JOIN ItemInWarehouse w ON i.itemID = w.itemID "
+                   "WHERE itemName = %s", (itemName,))
+    data = cursor.fetchall()
+    if len(data) == 0:
+        return jsonify({'message': "There are no items by this name."})
+    else:
+        # The following command will get all ordered items and display the total amount of those items that are
+        # on order status across all orders
+        cursor.execute("SELECT i.itemName, SUM(o.itemQuantity) AS totalCountOrdered"
+                       "FROM Item i INNER JOIN ItemsOrdered o "
+                       "ON i.itemID = o.itemID "
+                       "WHERE itemName = %s "
+                       "GROUP BY itemName", (itemName,))
         data += cursor.fetchall()
         cursor.close()
         return jsonify(data), 200
