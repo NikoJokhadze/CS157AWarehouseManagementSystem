@@ -24,8 +24,8 @@ app = Flask(__name__)
 @app.route("/employee/get_all", methods=['GET'])
 def get_users():
     cursor = conn.cursor()
-    cursor.execute("SELECT e.employeeID as EmployeeID, CONCAT_WS(" ", e.firstName, e.middleName, e.lastName) as Name, e.jobTitle as JobTitle,"
-                   "l.username as Username FROM Employee e LEFT JOIN Login l ON e.employeeID = l.employeeID")
+    cursor.execute("""SELECT e.employeeID as EmployeeID, CONCAT_WS(" ", e.firstName, e.middleName, e.lastName) as Name, 
+                    e.jobTitle as JobTitle, l.username as Username FROM Employee e LEFT JOIN Login l ON e.employeeID = l.employeeID""")
     data = cursor.fetchall()
     cursor.close()
     if len(data) == 0:
@@ -33,6 +33,10 @@ def get_users():
     else:
         return jsonify(data), 200
 
+
+@app.route("/login/check_login", methods=['GET'])
+def check_login():
+    pass
 
 @app.route("/employee/create_user", methods=['POST'])
 def create_user():
