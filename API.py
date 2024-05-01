@@ -6,7 +6,7 @@ from getpass import getpass
 
 try:  # Surrounding the connection in a try-except block to catch all connection errors
     #password = getpass("Enter your password for MySQL: ")
-    conn = mysql.connector.connect(user="root", password="NikoMySQL_13",
+    conn = mysql.connector.connect(user="root", password="mati11a",
                                    host='127.0.0.1', database="WarehouseSystem")
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:  # If the username or password is wrong, it's caught here
@@ -64,7 +64,7 @@ def create_user():
         return jsonify({"message": f"Failed to create a new user for {new_first} {new_last}", "error": str(e)}), 500
 
 
-@app.route("/login/update_username/<string:curr_user>", method=['PUT'])
+@app.route("/login/update_username/<string:curr_user>", methods=['PUT'])
 def update_username(curr_user):
     cursor = conn.cursor()
     data = request.json
@@ -82,7 +82,7 @@ def update_username(curr_user):
         cursor.close()
 
 
-@app.route("/login/update_password/<string:curr_user>", method=['PUT'])
+@app.route("/login/update_password/<string:curr_user>", methods=['PUT'])
 def update_password(curr_user):
     cursor = conn.cursor()
     data = request.json
@@ -104,7 +104,7 @@ def update_password(curr_user):
         cursor.close()
 
 
-@app.route("/employee/update_title/<string:curr_user>", method=['PUT'])
+@app.route("/employee/update_title/<string:curr_user>", methods=['PUT'])
 def update_title(curr_user):
     cursor = conn.cursor()
     data = request.json
@@ -123,7 +123,7 @@ def update_title(curr_user):
         cursor.close()
 
 
-@app.route('/employee/delete_employee/<string:username>', method=['DELETE'])
+@app.route('/employee/delete_employee/<string:username>', methods=['DELETE'])
 def delete_user(username):
     try:
         cursor = conn.cursor()
