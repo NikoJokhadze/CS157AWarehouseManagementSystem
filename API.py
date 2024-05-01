@@ -24,7 +24,8 @@ app = Flask(__name__)
 @app.route("/employee/get_all", methods=['GET'])
 def get_users():
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM Employee")
+    cursor.execute("SELECT e.employeeID as EmployeeID, CONCAT_WS(" ", e.firstName, e.middleName, e.lastName) as Name, e.jobTitle as JobTitle,"
+                   "l.username as Username FROM Employee e LEFT JOIN Login l ON e.employeeID = l.employeeID")
     data = cursor.fetchall()
     cursor.close()
     if len(data) == 0:
@@ -57,7 +58,7 @@ def create_user():
         cursor.execute("SELECT employeeID FROM Employee ORDER BY employeeID DESC LIMIT 1")
         last_employee_id = cursor.fetchone()[0]
         insert_query_login = "INSERT INTO Login (username, hashedPassword, employeeId) VALUES (%s, %s, %s)"
-        cursor.execute(new_username, new_password, last_employee_id)
+        cursor.execute(insert_query_login, (new_username, new_password, last_employee_id))
         return jsonify({"message": f"New employee data is added successfully for {last_employee_id} - {new_first} {new_last}"}), 201
     except Exception as e:
         return jsonify({"message": f"Failed to create a new user for {new_first} {new_last}", "error": str(e)}), 500
@@ -82,7 +83,7 @@ def update_username(curr_user):
 
 
 @app.route("/login/update_password/<string:curr_user>", method=['PUT'])
-def update_username(curr_user):
+def update_password(curr_user):
     cursor = conn.cursor()
     data = request.json
     old_password = data.get('old_password')
@@ -98,7 +99,26 @@ def update_username(curr_user):
         return jsonify({"message": f"Username is changed successfully to {new_password}"}), 201
     except Exception as e:
         return jsonify(
-            {"message": f"Failed to change the username to {new_password}", "error": str(e)}), 500
+            {"message": f"Failed to change the password to {new_password}", "error": str(e)}), 500
+    finally:
+        cursor.close()
+
+
+@app.route("/employee/update_title/<string:curr_user>", method=['PUT'])
+def update_title(curr_user):
+    cursor = conn.cursor()
+    data = request.json
+    new_title = data.get("new_title")
+    if new_title is None:
+        return jsonify({'message': 'New job title is a required field!'}), 400
+    try:
+        cursor.execute("SELECT employeeID FROM Login WHERE username=%s", curr_user)
+        title_employee_id = cursor.fetchone()[0]
+        cursor.execute("UPDATE Employee SET jobTitle = %s WHERE employeeID = %s",
+                   (new_title, title_employee_id))
+    except Exception as e:
+        return jsonify(
+            {"message": f"Failed to change the job title to {new_title}", "error": str(e)}), 500
     finally:
         cursor.close()
 
