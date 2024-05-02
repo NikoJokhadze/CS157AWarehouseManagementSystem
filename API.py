@@ -6,7 +6,7 @@ from getpass import getpass
 
 try:  # Surrounding the connection in a try-except block to catch all connection errors
     #password = getpass("Enter your password for MySQL: ")
-    conn = mysql.connector.connect(user="root", password="mati11a",
+    conn = mysql.connector.connect(user="root", password="NikoMySQL_13",
                                    host='127.0.0.1', database="WarehouseSystem")
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:  # If the username or password is wrong, it's caught here
@@ -179,13 +179,13 @@ def get_warehouses():
 @app.route('/warehouse/update_warehouse', methods=['PUT'])
 def update_warehouse():
     data = request.json
-    warehouseID = data[0]
-    warehouseAddressID = data[1]
-    capacity = data[2]
-    addressNum = data[3]
-    street = data[4]
-    city = data[5]
-    zipCode = data[6]
+    warehouseID = data.get("warehouseID")
+    warehouseAddressID = data.get("warehouseAddressID")
+    capacity = data.get("capacity")
+    addressNum = data.get("addressNum")
+    street = data.get("street")
+    city = data.get("city")
+    zipCode = data.get("zipCode")
 
     if warehouseID is None or warehouseAddressID is None or capacity is None or addressNum is None\
             or capacity is None or street is None or city is None or zipCode is None:
@@ -229,7 +229,7 @@ def get_orders():
 @app.route('/orders/delete_order', methods=['DELETE'])
 def delete_order():
     data = request.json
-    orderID = data[0]
+    orderID = data.get("orderID")
 
     if orderID is None:
         return jsonify({'message': 'orderID is a required field'}), 400
@@ -272,9 +272,9 @@ def get_items():
 @app.route('/item/create_item', methods=['POST'])
 def insert_item():
     data = request.json
-    itemName = data[0]
-    itemWeight = data[1]
-    itemPrice = data[2]
+    itemName = data.get("itemName")
+    itemWeight = data.get("itemWeight")
+    itemPrice = data.get("itemPrice")
 
     if itemName is None or itemWeight is None or itemPrice is None:
         return jsonify({'message': 'To insert a new item, you must provide the itemID, itemWeight, and itemPrice'}), 400
@@ -295,12 +295,12 @@ def insert_item():
 @app.route('/warehouse/add_items', methods=['POST'])
 def insert_items_in_warehouse():
     data = request.json
-    warehouseID = data[0]
-    itemID = data[1]
-    arrivalTime = data[2]
-    itemStatus = data[3]
-    itemLocation = data[4]
-    itemQuantity = data[5]
+    warehouseID = data.get("warehouseID")
+    itemID = data.get("itemID")
+    arrivalTime = data.get("arrivalTime")
+    itemStatus = data.get("itemStatus")
+    itemLocation = data.get("itemLocation")
+    itemQuantity = data.get("itemQuantity")
 
     if warehouseID is None or itemID is None or arrivalTime is None or itemStatus is None\
             or itemLocation is None or itemQuantity is None:
@@ -331,7 +331,7 @@ def insert_items_in_warehouse():
 @app.route("/item/get_items_by_warehouse", methods=['GET'])
 def get_items_by_warehouse():
     data = request.json
-    warehouseID = data[0]
+    warehouseID = data.get("warehouseID")
 
     if warehouseID is None:
         return jsonify({'message': 'Must enter warehouse ID to search by warehouse.'}), 400
@@ -359,7 +359,7 @@ def get_items_by_warehouse():
 @app.route("/item/get_items_by_name", methods=['GET'])
 def get_items_by_name():
     data = request.json
-    itemName = data[0]
+    itemName = data.get("itemName")
 
     if itemName is None:
         return jsonify({'message': 'Must enter item name to search by item.'}), 400
@@ -374,7 +374,7 @@ def get_items_by_name():
     else:
         # The following command will get all ordered items and display the total amount of those items that are
         # on order status across all orders
-        cursor.execute("SELECT i.itemName, SUM(o.itemQuantity) AS totalCountOrdered"
+        cursor.execute("SELECT i.itemName, SUM(o.itemQuantity) AS totalCountOrdered "
                        "FROM Item i INNER JOIN ItemsOrdered o "
                        "ON i.itemID = o.itemID "
                        "WHERE itemName = %s "

@@ -17,7 +17,7 @@ itemsFrame = Frame(root)
 employeesFrame = Frame(root)
 update_emp = Frame(root)
 
-link = "http://127.0.0.1:5000"
+link = "http://127.0.0.1:105"
 
 
 title = ("Arial", 25)
