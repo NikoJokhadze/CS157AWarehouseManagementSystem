@@ -5,8 +5,8 @@ from getpass import getpass
 
 
 try:  # Surrounding the connection in a try-except block to catch all connection errors
-    #password = getpass("Enter your password for MySQL: ")
-    conn = mysql.connector.connect(user="root", password="mati11a",
+    password = getpass("Enter your password for MySQL: ")
+    conn = mysql.connector.connect(user="root", password=password,
                                    host='127.0.0.1', database="WarehouseSystem")
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:  # If the username or password is wrong, it's caught here
@@ -36,7 +36,22 @@ def get_users():
 
 @app.route("/login/check_login", methods=['GET'])
 def check_login():
-    pass
+    cursor = conn.cursor()
+    data = request.json
+    input_username = data.get("username")
+    input_password = data.get("password")
+    if input_username or input_password is None:
+        return jsonify({'message': 'Please check that both username and password are inputted!'}), 400
+    try:
+        cursor.execute("""SELECT IF(EXISTS(SELECT * FROM LOGIN WHERE username=%s and hashedPassword=%s), 1, 0)""",
+                       (input_username, input_password))
+        check_res = cursor.fetchone()[0]
+        if check_res:
+            return True
+        else:
+            return False
+    except Exception as e:
+        return jsonify({"message": f"Unable to check inputted username and password", "error": str(e)}), 500
 
 @app.route("/employee/create_user", methods=['POST'])
 def create_user():
@@ -66,6 +81,8 @@ def create_user():
         return jsonify({"message": f"New employee data is added successfully for {last_employee_id} - {new_first} {new_last}"}), 201
     except Exception as e:
         return jsonify({"message": f"Failed to create a new user for {new_first} {new_last}", "error": str(e)}), 500
+    finally:
+        cursor.close()
 
 
 @app.route("/login/update_username/<string:curr_user>", methods=['PUT'])
