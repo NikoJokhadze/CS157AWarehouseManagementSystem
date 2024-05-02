@@ -6,7 +6,7 @@ import requests
 from time import sleep
 
 root = Tk()
-root.geometry("450x450")
+root.geometry("900x900")
 root.resizable(False, False)
 
 loginFrame = Frame(root)
@@ -15,6 +15,10 @@ ordersFrame = Frame(root)
 warehousesFrame = Frame(root)
 itemsFrame = Frame(root)
 employeesFrame = Frame(root)
+add_emp = Frame(root)
+
+link = "http://127.0.0.1:5000"
+
 
 title = ("Arial", 25)
 text = ("Arial", 12)
@@ -124,13 +128,23 @@ def employee():
     box.heading("4", text="UserName")
 
 
-    response = requests.get("http://127.0.0.1:5000/employee/get_all")
+    response = requests.get(f"{link}/employee/get_all")
     for i in response.json():
         box.insert("","end",values=i)
 
-    back_button = Button(employeesFrame, text="Back",
+    back_button = Button(employeesFrame, text="Add Employee",
                               command=lambda: [mainFrame.grid(), employeesFrame.grid_forget(), clear_table()], font=("Arial", 20))
     back_button.grid(row=2, column=0, pady=(50, 0))
+
+    back_button = Button(employeesFrame, text="Back",
+                              command=lambda: [mainFrame.grid(), employeesFrame.grid_forget(), clear_table()], font=("Arial", 20))
+    back_button.grid(row=3, column=0, pady=(50, 0))
+
+def add_employee():
+    back_button = Button(employeesFrame, text="Back",
+                         command=lambda: [mainFrame.grid(), employeesFrame.grid_forget(),],
+                         font=("Arial", 20))
+    back_button.grid(row=3, column=0, pady=(50, 0))
 
 
 main()
