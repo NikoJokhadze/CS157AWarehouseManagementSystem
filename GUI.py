@@ -132,19 +132,26 @@ def employee():
     for i in response.json():
         box.insert("","end",values=i)
 
-    back_button = Button(employeesFrame, text="Add Employee",
-                              command=lambda: [mainFrame.grid(), employeesFrame.grid_forget(), clear_table()], font=("Arial", 20))
-    back_button.grid(row=2, column=0, pady=(50, 0))
+    user_enter = Entry(employeesFrame, font=("Arial", 15))
+    user_enter.grid(row=2, column=0, pady=(50, 0))
 
-    back_button = Button(employeesFrame, text="Back",
-                              command=lambda: [mainFrame.grid(), employeesFrame.grid_forget(), clear_table()], font=("Arial", 20))
-    back_button.grid(row=3, column=0, pady=(50, 0))
-
-def add_employee():
-    back_button = Button(employeesFrame, text="Back",
-                         command=lambda: [mainFrame.grid(), employeesFrame.grid_forget(),],
+    add_emp_button = Button(employeesFrame, text="Add Employee",
+                              command=lambda: [add_emp.grid(),
+                                               employeesFrame.grid_forget()],
                          font=("Arial", 20))
-    back_button.grid(row=3, column=0, pady=(50, 0))
+    add_emp_button.grid(row=3, column=0, pady=(0, 0))
+
+    back_button = Button(employeesFrame, text="Back",
+                              command=lambda: [mainFrame.grid(), employeesFrame.grid_forget(), clear_table()], font=("Arial", 20))
+    back_button.grid(row=4, column=0, pady=(50, 0))
+
+def add_employee(temp):
+    back_button = Button(add_emp, text="Back",
+                         command=lambda: [employeesFrame.grid(),
+                                          add_emp.grid_forget()] ,
+                         font=("Arial", 20))
+    print(temp)
+    back_button.grid(row=0, column=0, pady=(0, 0))
 
 
 main()
@@ -154,6 +161,7 @@ warehouse()
 item()
 employee()
 loginFrame.grid()
+add_employee()
 
 if __name__ == '__main__':
     root.mainloop()
