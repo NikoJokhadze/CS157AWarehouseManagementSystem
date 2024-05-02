@@ -1,4 +1,8 @@
+import tkinter.ttk
 from tkinter import *
+from tkinter import scrolledtext, ttk
+import requests
+
 from time import sleep
 
 root = Tk()
@@ -62,7 +66,7 @@ def main():
     items_button.grid(row=2, column=0, pady=(50, 0))
 
     employees_button = Button(mainFrame, text="Employees",
-                              command=lambda: [employeesFrame.grid(),mainFrame.grid_forget()], font=("Arial", 20))
+                              command=lambda: [employeesFrame.grid(),mainFrame.grid_forget(), employee()], font=("Arial", 20))
     employees_button.grid(row=3, column=0, pady=(50, 0))
 
 def orders():
@@ -92,12 +96,41 @@ def item():
 
 
 def employee():
-    label = Label(employeesFrame, text="This the order frame", font=title)
-    label.grid(row=0, column=0, pady=(0, 100))
+    def clear_table():
+        for x in box.get_children():
+            box.delete(x)
+
+    label = Label(employeesFrame, text="This the employee frame", font=title)
+    label.grid(row=0, column=0, pady=(0, 50))
+
+    box = ttk.Treeview(employeesFrame, selectmode ="browse")
+    box.grid(row=1, column=0, pady=(0, 0))
+
+    scroll = Scrollbar(employeesFrame, orient="vertical", command = box.yview)
+    scroll.grid(row=1, column=1, pady=(0, 0))
+
+    box.configure(xscrollcommand=scroll.set)
+    box["columns"] = ("1", "2", "3", "4")
+    box['show'] = 'headings'
+
+    box.column("1", width=50)
+    box.column("2", width=180)
+    box.column("3", width=80)
+    box.column("4", width=80)
+
+    box.heading("1", text="ID")
+    box.heading("2", text="Name")
+    box.heading("3", text="Job")
+    box.heading("4", text="UserName")
+
+
+    response = requests.get("http://127.0.0.1:5000/employee/get_all")
+    for i in response.json():
+        box.insert("","end",values=i)
 
     back_button = Button(employeesFrame, text="Back",
-                              command=lambda: [mainFrame.grid(), employeesFrame.grid_forget()], font=("Arial", 20))
-    back_button.grid(row=1, column=0, pady=(50, 0))
+                              command=lambda: [mainFrame.grid(), employeesFrame.grid_forget(), clear_table()], font=("Arial", 20))
+    back_button.grid(row=2, column=0, pady=(50, 0))
 
 
 main()
