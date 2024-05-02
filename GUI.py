@@ -15,7 +15,7 @@ ordersFrame = Frame(root)
 warehousesFrame = Frame(root)
 itemsFrame = Frame(root)
 employeesFrame = Frame(root)
-add_emp = Frame(root)
+update_emp = Frame(root)
 
 link = "http://127.0.0.1:5000"
 
@@ -111,9 +111,9 @@ def employee():
     box.grid(row=1, column=0, pady=(0, 0))
 
     scroll = Scrollbar(employeesFrame, orient="vertical", command = box.yview)
-    scroll.grid(row=1, column=1, pady=(0, 0))
+    scroll.grid(row=1, column=1, pady=(0, 0), sticky="ns")
 
-    box.configure(xscrollcommand=scroll.set)
+    box.configure(yscrollcommand=scroll.set)
     box["columns"] = ("1", "2", "3", "4")
     box['show'] = 'headings'
 
@@ -135,23 +135,29 @@ def employee():
     user_enter = Entry(employeesFrame, font=("Arial", 15))
     user_enter.grid(row=2, column=0, pady=(50, 0))
 
-    add_emp_button = Button(employeesFrame, text="Add Employee",
-                              command=lambda: [add_emp.grid(),
-                                               employeesFrame.grid_forget()],
-                         font=("Arial", 20))
-    add_emp_button.grid(row=3, column=0, pady=(0, 0))
+    update_emp_button = Button(employeesFrame, text="Update Employee",
+                              command=lambda: [update_emp.grid(),
+                                               employeesFrame.grid_forget(),
+                                               update_employee(user_enter.get()),
+                                               clear_table()
+                                               ],
+                              font=("Arial", 20))
+    update_emp_button.grid(row=3, column=0, pady=(0, 0))
 
     back_button = Button(employeesFrame, text="Back",
                               command=lambda: [mainFrame.grid(), employeesFrame.grid_forget(), clear_table()], font=("Arial", 20))
     back_button.grid(row=4, column=0, pady=(50, 0))
 
-def add_employee(temp):
-    back_button = Button(add_emp, text="Back",
+def update_employee(temp):
+    label = Label(update_emp, text=f"This Username {temp}", font=title)
+    label.grid(row=0, column=0, pady=(0, 0))
+
+    back_button = Button(update_emp, text="Back",
                          command=lambda: [employeesFrame.grid(),
-                                          add_emp.grid_forget()] ,
+                                          update_emp.grid_forget(),
+                                          employee()],
                          font=("Arial", 20))
-    print(temp)
-    back_button.grid(row=0, column=0, pady=(0, 0))
+    back_button.grid(row=4, column=0, pady=(0, 0))
 
 
 main()
@@ -161,7 +167,7 @@ warehouse()
 item()
 employee()
 loginFrame.grid()
-add_employee()
+update_employee(0)
 
 if __name__ == '__main__':
     root.mainloop()
