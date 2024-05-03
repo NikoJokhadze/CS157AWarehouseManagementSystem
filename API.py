@@ -6,7 +6,7 @@ from getpass import getpass
 
 try:  # Surrounding the connection in a try-except block to catch all connection errors
     #password = getpass("Enter your password for MySQL: ")
-    conn = mysql.connector.connect(user="root", password="mati11a",
+    conn = mysql.connector.connect(user="root", password="Laiyinkoon3!",
                                    host='127.0.0.1', database="WarehouseSystem")
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:  # If the username or password is wrong, it's caught here
@@ -40,7 +40,7 @@ def check_login():
     data = request.json
     input_username = data.get("username")
     input_password = data.get("password")
-    if input_username or input_password is None:
+    if input_username == "" or input_password == "":
         return jsonify({'message': 'Please check that both username and password are inputted!'}), 400
     try:
         cursor.execute("""SELECT IF(EXISTS(SELECT * FROM LOGIN WHERE username=%s and hashedPassword=%s), 1, 0)""",
@@ -63,9 +63,9 @@ def create_user():
     job_title = data.get('jobTitle')
     new_username = data.get('username')
     new_password = data.get('password')
-    if new_first is "":
+    if new_first == "":
         return jsonify({'message': 'First Name is a required field!'}), 400
-    elif new_last is "":
+    elif new_last == "":
         return jsonify({'message': 'Last Name is a required field!'}), 400
     elif new_username is None or new_password is None:
         return jsonify({'message': 'Missing Username or Password; Both are required before proceeding'}), 400
@@ -90,7 +90,7 @@ def update_username(curr_user):
     cursor = conn.cursor()
     data = request.json
     new_username = data.get('new_username')
-    if new_username is "":
+    if new_username == "":
         return jsonify({'message': 'New Username is a required field!'}), 400
     try:
         cursor.execute("UPDATE Login SET username = %s WHERE username = %s", (new_username, curr_user))
@@ -109,9 +109,9 @@ def update_password(curr_user):
     data = request.json
     old_password = data.get('old_password')
     new_password = data.get('new_password')
-    if old_password is "":
+    if old_password == "":
         return jsonify({'message': 'Old password is a required field!'}), 400
-    elif new_password is "":
+    elif new_password == "":
         return jsonify({'message': 'New password is a required field!'}), 400
     try:
         cursor.execute("UPDATE Login SET hashedPassword = %s WHERE username = %s and hashedPassword = %s",
@@ -130,13 +130,13 @@ def update_title(curr_user):
     cursor = conn.cursor()
     data = request.json
     new_title = data.get("new_title")
-    if new_title is "":
+    if new_title == "":
         return jsonify({'message': 'New job title is a required field!'}), 400
     try:
-        cursor.execute("SELECT employeeID FROM Login WHERE username=%s", curr_user)
+        cursor.execute("SELECT employeeID FROM Login WHERE username=%s", (curr_user,))
         title_employee_id = cursor.fetchone()[0]
-        cursor.execute("UPDATE Employee SET jobTitle = %s WHERE employeeID = %s",
-                   (new_title, title_employee_id))
+        cursor.execute("UPDATE Employee SET jobTitle = %s WHERE employeeID = %s", (new_title, title_employee_id))
+        return jsonify({"message": f"Job title for {curr_user} is changed successfully to {new_title}"}), 201
     except Exception as e:
         return jsonify(
             {"message": f"Failed to change the job title to {new_title}", "error": str(e)}), 500
@@ -148,15 +148,15 @@ def update_title(curr_user):
 def delete_user(username):
     try:
         cursor = conn.cursor()
-        cursor.execute("SELECT employeeID from Login WHERE username=%s", username)
+        cursor.execute("SELECT employeeID from Login WHERE username=%s", (username,))
         id_res = cursor.fetchone()
         delete_id = id_res[0]
-        cursor.execute("DELETE FROM Login WHERE username=%s", username)
-        cursor.execute("DELETE FROM Employee WHERE employeeID=%s", delete_id)
+        cursor.execute("DELETE FROM Login WHERE username=%s", (username,))
+        cursor.execute("DELETE FROM Employee WHERE employeeID=%s", (delete_id,))
         conn.commit()
         return jsonify({"message": 'User deleted successfully!'})
-    except Exception as err:
-        return jsonify({"message": f"Failed to delete user {username}", "error": str(err)}), 500
+    except Exception as e:
+        return jsonify({"message": f"Failed to delete user {username}", "error": str(e)}), 500
     finally:
         cursor.close()
 
@@ -187,8 +187,8 @@ def update_warehouse():
     city = data.get("city")
     zipCode = data.get("zipCode")
 
-    if warehouseID is "" or warehouseAddressID is "" or capacity is "" or addressNum is ""\
-            or capacity is "" or street is "" or city is "" or zipCode is "":
+    if warehouseID == "" or warehouseAddressID == "" or capacity == "" or addressNum == ""\
+            or capacity == "" or street == "" or city == "" or zipCode == "":
         return jsonify({'message': 'To update the warehouse, you must provide the current warehouseID and '
                                    'warehouseAddressID, then provide the updated addressID, capacity,'
                                    'addressNum, street, city, and zipCode'}), 400
@@ -231,7 +231,7 @@ def delete_order():
     data = request.json
     orderID = data.get("orderID")
 
-    if orderID is "":
+    if orderID == "":
         return jsonify({'message': 'orderID is a required field'}), 400
 
     try:
@@ -276,7 +276,7 @@ def insert_item():
     itemWeight = data.get("itemWeight")
     itemPrice = data.get("itemPrice")
 
-    if itemName is "" or itemWeight is "" or itemPrice is "":
+    if itemName == "" or itemWeight == "" or itemPrice == "":
         return jsonify({'message': 'To insert a new item, you must provide the itemID, itemWeight, and itemPrice'}), 400
 
     try:
@@ -302,8 +302,8 @@ def insert_items_in_warehouse():
     itemLocation = data.get("itemLocation")
     itemQuantity = data.get("itemQuantity")
 
-    if warehouseID is "" or itemID is "" or arrivalTime is "" or itemStatus is ""\
-            or itemLocation is "" or itemQuantity is "":
+    if warehouseID == "" or itemID == "" or arrivalTime == "" or itemStatus == ""\
+            or itemLocation == "" or itemQuantity == "":
         return jsonify({'message': 'To insert an item in a warehouse, you must provide the itemID, the arrival time, '
                                    'the item status, the location in the warehouse, and the total quantity to place'
                                    'in the warehouse.'}), 400
@@ -314,7 +314,7 @@ def insert_items_in_warehouse():
         # The following few lines checks to see if the itemID exists in the Item table
         cursor.execute("SELECT * FROM Item WHERE itemID = %s", (itemID,))
         item = cursor.fetchone()
-        if item is "":
+        if item == "":
             return jsonify({'message': f'Item with ID {itemID} does not exist in the Item table.'}), 404
 
         insert_query = ("Insert into ItemInWarehouse (warehouseID, itemID, arrivalTime, itemStatus, itemLocation, "
@@ -333,7 +333,7 @@ def get_items_by_warehouse():
     data = request.json
     warehouseID = data.get("warehouseID")
 
-    if warehouseID is "":
+    if warehouseID == "":
         return jsonify({'message': 'Must enter warehouse ID to search by warehouse.'}), 400
 
     cursor = conn.cursor()
@@ -361,7 +361,7 @@ def get_items_by_name():
     data = request.json
     itemName = data.get("itemName")
 
-    if itemName is "":
+    if itemName == "":
         return jsonify({'message': 'Must enter item name to search by item.'}), 400
 
     cursor = conn.cursor()
