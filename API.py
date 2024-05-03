@@ -6,7 +6,7 @@ from getpass import getpass
 
 try:  # Surrounding the connection in a try-except block to catch all connection errors
     #password = getpass("Enter your password for MySQL: ")
-    conn = mysql.connector.connect(user="root", password="Laiyinkoon3!",
+    conn = mysql.connector.connect(user="root", password="mati11a",
                                    host='127.0.0.1', database="WarehouseSystem")
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:  # If the username or password is wrong, it's caught here
@@ -67,7 +67,7 @@ def create_user():
         return jsonify({'message': 'First Name is a required field!'}), 400
     elif new_last == "":
         return jsonify({'message': 'Last Name is a required field!'}), 400
-    elif new_username is None or new_password is None:
+    elif new_username == "" or new_password == "":
         return jsonify({'message': 'Missing Username or Password; Both are required before proceeding'}), 400
     try:
 
