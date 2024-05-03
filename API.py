@@ -117,7 +117,7 @@ def update_password(curr_user):
         cursor.execute("UPDATE Login SET hashedPassword = %s WHERE username = %s and hashedPassword = %s",
                        (new_password, curr_user, old_password))
         conn.commit()
-        return jsonify({"message": f"Username is changed successfully to {new_password}"}), 201
+        return jsonify({"message": f"Password is changed successfully to {new_password}"}), 201
     except Exception as e:
         return jsonify(
             {"message": f"Failed to change the password to {new_password}", "error": str(e)}), 500
