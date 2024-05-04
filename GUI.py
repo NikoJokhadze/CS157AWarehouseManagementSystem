@@ -35,7 +35,10 @@ def login():
     def test_login():
         user = user_enter.get()
         pas = pass_enter.get()
-        if user == "1" and pas == "1":
+        request = (requests.get("http://127.0.0.1:105/login/check_login",
+                        json={"username": user,
+                              "password": pas})).json()
+        if request["response"]:
             main()
             loginFrame.grid_forget()
             mainFrame.grid()

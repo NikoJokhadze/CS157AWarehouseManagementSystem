@@ -47,9 +47,9 @@ def check_login():
                        (input_username, input_password))
         check_res = cursor.fetchone()[0]
         if check_res:
-            return True
+            return jsonify({"response": True})
         else:
-            return False
+            return jsonify({"response": False})
     except Exception as e:
         return jsonify({"message": f"Unable to check inputted username and password", "error": str(e)}), 500
 
