@@ -189,9 +189,7 @@ def update_warehouse():
 
     if warehouseID == "" or warehouseAddressID == "" or capacity == "" or addressNum == ""\
             or capacity == "" or street == "" or city == "" or zipCode == "":
-        return jsonify({'message': 'To update the warehouse, you must provide the current warehouseID and '
-                                   'warehouseAddressID, then provide the updated addressID, capacity,'
-                                   'addressNum, street, city, and zipCode'}), 400
+        return jsonify({'message': 'One of the required fields is missing'}), 400
 
     try:
         cursor = conn.cursor()

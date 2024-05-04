@@ -18,6 +18,7 @@ itemsFrame = Frame(root)
 employeesFrame = Frame(root)
 update_emp = Frame(root)
 create_emp = Frame(root)
+update_ware = Frame(root)
 
 title = ("Arial", 25)
 text = ("Arial", 12)
@@ -109,13 +110,114 @@ def warehouse():
     label = Label(warehousesFrame, text="This the warehouse frame", font=title)
     label.grid(row=0, column=0, pady=(0, 100))
 
+    box = ttk.Treeview(warehousesFrame, selectmode="browse")
+    box.grid(row=1, column=0, pady=(0, 0))
+
+    scroll = Scrollbar(warehousesFrame, orient="vertical", command=box.yview)
+    scroll.grid(row=1, column=1, pady=(0, 0), sticky="ns")
+
+    box.configure(yscrollcommand=scroll.set)
+    box["columns"] = ("1", "2", "3", "4", "5", "6")
+    box['show'] = 'headings'
+
+    box.column("1", width=50)
+    box.column("2", width=70)
+    box.column("3", width=100)
+    box.column("4", width=200)
+    box.column("5", width=200)
+    box.column("6", width=100)
+
+    box.heading("1", text="ID")
+    box.heading("2", text="capacity")
+    box.heading("3", text="addressNum")
+    box.heading("4", text="street")
+    box.heading("5", text="city")
+    box.heading("6", text="zipcode")
+
+    response = requests.get(f"http://127.0.0.1:105/warehouse/get_warehouses")
+    for i in response.json():
+        box.insert("", "end", values=i)
+
+    user_enter = Entry(warehousesFrame, font=("Arial", 15))
+    user_enter.grid(row=2, column=0, pady=(50, 0))
+
+    update_emp_button = Button(warehousesFrame, text="Update Employee",
+                               command=lambda: [update_ware.grid(),
+                                                warehousesFrame.grid_forget(),
+                                                update_warehouse(user_enter.get()),
+                                                clear_frame(warehousesFrame)],
+                               font=("Arial", 20))
+    update_emp_button.grid(row=3, column=0, pady=(0, 0))
+
     back_button = Button(warehousesFrame, text="Back",
                          command=lambda: [mainFrame.grid(),
                                           warehousesFrame.grid_forget(),
                                           clear_frame(warehousesFrame)],
                          font=("Arial", 20))
-    back_button.grid(row=1, column=0, pady=(50, 0))
+    back_button.grid(row=5, column=0, pady=(50, 0))
 
+def update_warehouse(temp):
+    def up_ware():
+        response = requests.put(f"http://127.0.0.1:105/warehouse/update_warehouse",
+                                 json={"warehouseID": temp,
+                                       "warehouseAddressID": add_id_enter.get(),
+                                       "capacity": capacity_enter.get(),
+                                       "addressNum": add_num_enter.get(),
+                                       "street": street_enter.get(),
+                                       "city": city_enter.get(),
+                                       "zipCode": zip_enter.get()})
+        response = json.loads(response.text)
+        label_response.config(text=response["message"])
+
+    label = Label(update_ware, text=f"Update Warehouse {temp}", font=title)
+    label.grid(row=0, column=0, pady=(0, 50))
+
+    label = Label(update_ware, text="Warehouse Address ID", font=text)
+    label.grid(row=3, column=0, pady=(0, 0))
+    add_id_enter = Entry(update_ware, font=("Arial", 15))
+    add_id_enter.grid(row=4, column=0, pady=(0, 50))
+
+    label = Label(update_ware, text="Capacity", font=text)
+    label.grid(row=5, column=0, pady=(0, 0))
+    capacity_enter = Entry(update_ware, font=("Arial", 15))
+    capacity_enter.grid(row=6, column=0, pady=(0, 50))
+
+    label = Label(update_ware, text="Address Number", font=text)
+    label.grid(row=7, column=0, pady=(0, 0))
+    add_num_enter = Entry(update_ware, font=("Arial", 15))
+    add_num_enter.grid(row=8, column=0, pady=(0, 50))
+
+    label = Label(update_ware, text="Street", font=text)
+    label.grid(row=9, column=0, pady=(0, 0))
+    street_enter = Entry(update_ware, font=("Arial", 15))
+    street_enter.grid(row=10, column=0, pady=(0, 50))
+
+    label = Label(update_ware, text="City", font=text)
+    label.grid(row=11, column=0, pady=(0, 0))
+    city_enter = Entry(update_ware, font=("Arial", 15))
+    city_enter.grid(row=12, column=0, pady=(0, 50))
+
+    label = Label(update_ware, text="Zip Code", font=text)
+    label.grid(row=13, column=0, pady=(0, 0))
+    zip_enter = Entry(update_ware, font=("Arial", 15))
+    zip_enter.grid(row=14, column=0, pady=(0, 50))
+
+    ware_update = Button(update_ware, text="Update Warehouse",
+                             command=lambda: [ware_update.configure(text="Done"),
+                                              up_ware()],
+                             font=("Arial", 20))
+    ware_update.grid(row=15, column=0, pady=(0, 0))
+
+    label_response = Label(update_ware, text="", font=text)
+    label_response.grid(row=16, column=0, pady=(10, 10))
+
+    back_button = Button(update_ware, text="Back",
+                         command=lambda: [warehousesFrame.grid(),
+                                          update_ware.grid_forget(),
+                                          warehouse(),
+                                          clear_frame(update_ware)],
+                         font=("Arial", 20))
+    back_button.grid(row=17, column=0, pady=(0, 0))
 
 def item():
     label = Label(itemsFrame, text="This the item frame", font=title)
@@ -131,7 +233,7 @@ def item():
 
 def employee():
     def del_emp():
-        response = requests.delete(f"http://127.0.0.1:105/employee/delete_employee/{user_enter.get()}")
+        requests.delete(f"http://127.0.0.1:105/employee/delete_employee/{user_enter.get()}")
         clear_frame(employeesFrame)
         employee()
 
@@ -184,14 +286,14 @@ def employee():
                                          create_employee(),
                                          clear_frame(employeesFrame)],
                         font=("Arial", 20))
-    cre_button.grid(row=5, column=0, pady=(50, 0))
+    cre_button.grid(row=6, column=0, pady=(50, 0))
 
     back_button = Button(employeesFrame, text="Back",
                          command=lambda: [mainFrame.grid(),
                                           employeesFrame.grid_forget(),
                                           clear_frame(employeesFrame)],
                          font=("Arial", 20))
-    back_button.grid(row=6, column=0, pady=(50, 0))
+    back_button.grid(row=7, column=0, pady=(50, 0))
 
 
 def create_employee():
@@ -203,7 +305,6 @@ def create_employee():
                                       "jobTitle": job_enter.get(),
                                       "username": user_enter.get(),
                                       "password": pass_enter.get()})
-        print(response.text)
         response = json.loads(response.text)
         label_response.config(text=response["message"])
 
