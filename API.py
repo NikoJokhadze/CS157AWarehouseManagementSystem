@@ -73,11 +73,11 @@ def create_user():
 
         insert_query_employee = "INSERT INTO Employee (firstName, middleName, lastName, jobTitle) VALUES (%s, %s, %s, %s)"
         cursor.execute(insert_query_employee, (new_first, new_middle, new_last, job_title))
-        conn.commit()
         cursor.execute("SELECT employeeID FROM Employee ORDER BY employeeID DESC LIMIT 1")
         last_employee_id = cursor.fetchone()[0]
         insert_query_login = "INSERT INTO Login (username, hashedPassword, employeeId) VALUES (%s, %s, %s)"
         cursor.execute(insert_query_login, (new_username, new_password, last_employee_id))
+        conn.commit()
         return jsonify({"message": f"New employee data is added successfully for {last_employee_id} - {new_first} {new_last}"}), 201
     except Exception as e:
         return jsonify({"message": f"Failed to create a new user for {new_first} {new_last}", "error": str(e)}), 500
