@@ -38,7 +38,7 @@ def login():
         request = (requests.get("http://127.0.0.1:105/login/check_login",
                         json={"username": user,
                               "password": pas})).json()
-        if request["response"]:
+        if request != {} and request["response"]:
             main()
             loginFrame.grid_forget()
             mainFrame.grid()

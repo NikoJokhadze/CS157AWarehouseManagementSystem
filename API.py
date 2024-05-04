@@ -41,7 +41,7 @@ def check_login():
     input_username = data.get("username")
     input_password = data.get("password")
     if input_username == "" or input_password == "":
-        return jsonify({'message': 'Please check that both username and password are inputted!'}), 400
+        return jsonify({'message': 'Please check that both username and password are inputted!', 'response': False}), 400
     try:
         cursor.execute("""SELECT IF(EXISTS(SELECT * FROM LOGIN WHERE username=%s and hashedPassword=%s), 1, 0)""",
                        (input_username, input_password))
@@ -51,7 +51,7 @@ def check_login():
         else:
             return jsonify({"response": False})
     except Exception as e:
-        return jsonify({"message": f"Unable to check inputted username and password", "error": str(e)}), 500
+        return jsonify({"message": f"Unable to check inputted username and password", "error": str(e), 'response': False}), 500
 
 @app.route("/employee/create_user", methods=['POST'])
 def create_user():
