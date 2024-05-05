@@ -6,7 +6,7 @@ from getpass import getpass
 
 try:  # Surrounding the connection in a try-except block to catch all connection errors
     #password = getpass("Enter your password for MySQL: ")
-    conn = mysql.connector.connect(user="root", password="mati11a",
+    conn = mysql.connector.connect(user="root", password="Laiyinkoon3!",
                                    host='127.0.0.1', database="WarehouseSystem")
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:  # If the username or password is wrong, it's caught here
@@ -250,18 +250,18 @@ def delete_order():
 @app.route("/item/get_items", methods=['GET'])
 def get_items():
     cursor = conn.cursor()
-    cursor.execute("SELECT i.itemID, i.itemName, i.itemWeight, i.itemPrice, w.itemQuantity, w.warehouseID "
-                   "FROM Item i INNER JOIN ItemInWarehouse w ON i.itemID = w.itemID")
+    cursor.execute("""SELECT i.itemID, i.itemName, i.itemWeight, i.itemPrice, w.itemQuantity, w.warehouseID
+                   FROM Item i INNER JOIN ItemInWarehouse w ON i.itemID = w.itemID""")
     data = cursor.fetchall()
     if len(data) == 0:
         return jsonify({'message': "There are no items in the system."})
     else:
         # The following command will get all ordered items and display the total amount of those items that are
         # on order status across all orders
-        cursor.execute("SELECT i.itemName, SUM(o.itemQuantity) AS totalCountOrdered"
-                       "FROM Item i INNER JOIN ItemsOrdered o "
-                       "ON i.itemID = o.itemID "
-                       "GROUP BY itemName")
+        cursor.execute("""SELECT i.itemName, SUM(o.itemQuantity) AS totalCountOrdered
+                       FROM Item i INNER JOIN ItemsOrdered o 
+                       ON i.itemID = o.itemID 
+                       GROUP BY itemName""")
         data += cursor.fetchall()
         cursor.close()
         return jsonify(data), 200
