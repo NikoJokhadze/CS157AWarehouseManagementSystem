@@ -19,6 +19,7 @@ employeesFrame = Frame(root)
 update_emp = Frame(root)
 create_emp = Frame(root)
 update_ware = Frame(root)
+orderItemsFrame = Frame(root)
 
 title = ("Arial", 25)
 text = ("Arial", 12)
@@ -71,7 +72,7 @@ def main():
                                             mainFrame.grid_forget(),
                                             orders()],
                            font=("Arial", 20))
-    orders_button.grid(row=0, column=0, pady=(25, 0))
+    orders_button.grid(row=2, column=0, pady=(25, 0))
 
     warehouses_button = Button(mainFrame, text="Warehouses",
                                command=lambda: [warehousesFrame.grid(),
@@ -85,7 +86,7 @@ def main():
                                            mainFrame.grid_forget(),
                                            item()],
                           font=("Arial", 20))
-    items_button.grid(row=2, column=0, pady=(50, 0))
+    items_button.grid(row=0, column=0, pady=(50, 0))
 
     employees_button = Button(mainFrame, text="Employees",
                               command=lambda: [employeesFrame.grid(),
@@ -99,14 +100,84 @@ def orders():
     label = Label(ordersFrame, text="This the order frame", font=title)
     label.grid(row=0, column=0, pady=(0, 100))
 
-    box = ttk.Treeview(employeesFrame, selectmode="browse")
+    box = ttk.Treeview(ordersFrame, selectmode="browse")
     box.grid(row=1, column=0, pady=(0, 0))
+
+    scroll = Scrollbar(ordersFrame, orient="vertical", command=box.yview)
+    scroll.grid(row=1, column=1, pady=(0, 0), sticky="ns")
+
+    box.configure(yscrollcommand=scroll.set)
+    box["columns"] = ("1", "2", "3", "4", "5")
+    box['show'] = 'headings'
+
+    box.column("1", width=100)
+    box.column("2", width=100)
+    box.column("3", width=200)
+    box.column("4", width=125)
+    box.column("5", width=100)
+
+    box.heading("1", text="Order ID")
+    box.heading("2", text="Status")
+    box.heading("3", text="Departure Time")
+    box.heading("4", text="Delivery Address ID")
+    box.heading("5", text="Handler ID")
+
+    response = requests.get("http://127.0.0.1:105/orders/get_orders")
+    for i in response.json():
+        box.insert("", "end", values=i)
+
+    user_enter = Entry(ordersFrame, font=("Arial", 15))
+    user_enter.grid(row=2, column=0, pady=(50, 0))
+
+    search_button = Button(ordersFrame, text="Search Items",
+                               command=lambda: [orderItemsFrame.grid(),
+                                                ordersFrame.grid_forget(),
+                                                order_items(user_enter.get()),
+                                                clear_frame(ordersFrame)],
+                               font=("Arial", 20))
+    search_button.grid(row=3, column=0, pady=(0, 0))
 
     back_button = Button(ordersFrame, text="Back",
                          command=lambda: [mainFrame.grid(),
-                                          ordersFrame.grid_forget()],
+                                          ordersFrame.grid_forget(),
+                                          clear_frame(ordersFrame)],
                          font=("Arial", 20))
-    back_button.grid(row=1, column=0, pady=(50, 0))
+    back_button.grid(row=5, column=0, pady=(50, 0))
+
+def order_items(temp):
+    label = Label(orderItemsFrame, text="This the warehouse frame", font=title)
+    label.grid(row=0, column=0, pady=(0, 100))
+
+    box = ttk.Treeview(orderItemsFrame, selectmode="browse")
+    box.grid(row=1, column=0, pady=(0, 0))
+
+    scroll = Scrollbar(orderItemsFrame, orient="vertical", command=box.yview)
+    scroll.grid(row=1, column=1, pady=(0, 0), sticky="ns")
+
+    box.configure(yscrollcommand=scroll.set)
+    box["columns"] = ("1", "2", "3")
+    box['show'] = 'headings'
+
+    box.column("1", width=200)
+    box.column("2", width=200)
+    box.column("3", width=200)
+
+    box.heading("1", text="Item Name")
+    box.heading("2", text="Item ID")
+    box.heading("3", text="Item Quantity")
+
+
+    response = requests.get("http://127.0.0.1:105/orders/get_items_in_orders", json={"orderID": temp})
+    for i in response.json():
+        box.insert("", "end", values=i)
+
+    back_button = Button(orderItemsFrame, text="Back",
+                         command=lambda: [ordersFrame.grid(),
+                                          orderItemsFrame.grid_forget(),
+                                          orders(),
+                                          clear_frame(orderItemsFrame)],
+                         font=("Arial", 20))
+    back_button.grid(row=5, column=0, pady=(50, 0))
 
 
 def warehouse():
@@ -137,7 +208,7 @@ def warehouse():
     box.heading("5", text="city")
     box.heading("6", text="zipcode")
 
-    response = requests.get(f"http://127.0.0.1:105/warehouse/get_warehouses")
+    response = requests.get("http://127.0.0.1:105/warehouse/get_warehouses")
     for i in response.json():
         box.insert("", "end", values=i)
 
@@ -161,7 +232,7 @@ def warehouse():
 
 def update_warehouse(temp):
     def up_ware():
-        response = requests.put(f"http://127.0.0.1:105/warehouse/update_warehouse",
+        response = requests.put("http://127.0.0.1:105/warehouse/update_warehouse",
                                  json={"warehouseID": temp,
                                        "warehouseAddressID": add_id_enter.get(),
                                        "capacity": capacity_enter.get(),
@@ -226,12 +297,41 @@ def item():
     label = Label(itemsFrame, text="This the item frame", font=title)
     label.grid(row=0, column=0, pady=(0, 100))
 
+    box = ttk.Treeview(itemsFrame, selectmode="browse")
+    box.grid(row=1, column=0, pady=(0, 0))
+
+    scroll = Scrollbar(itemsFrame, orient="vertical", command=box.yview)
+    scroll.grid(row=1, column=1, pady=(0, 0), sticky="ns")
+
+    box.configure(yscrollcommand=scroll.set)
+    box["columns"] = ("1", "2", "3", "4", "5", "6")
+    box['show'] = 'headings'
+
+    box.column("1", width=50)
+    box.column("2", width=200)
+    box.column("3", width=100)
+    box.column("4", width=70)
+    box.column("5", width=70)
+    box.column("6", width=100)
+
+    box.heading("1", text="ID")
+    box.heading("2", text="Name")
+    box.heading("3", text="Weight")
+    box.heading("4", text="Price")
+    box.heading("5", text="Quantity")
+    box.heading("6", text="WarehouseID")
+
+    response = requests.get("http://127.0.0.1:105/item/get_items")
+    for i in response.json():
+        box.insert("", "end", values=i)
+
+
     back_button = Button(itemsFrame, text="Back",
                          command=lambda: [mainFrame.grid(),
                                           itemsFrame.grid_forget(),
                                           clear_frame(itemsFrame)],
                          font=("Arial", 20))
-    back_button.grid(row=1, column=0, pady=(50, 0))
+    back_button.grid(row=7, column=0, pady=(50, 0))
 
 
 def employee():
