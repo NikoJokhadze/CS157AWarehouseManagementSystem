@@ -6,7 +6,7 @@ from getpass import getpass
 
 try:  # Surrounding the connection in a try-except block to catch all connection errors
     #password = getpass("Enter your password for MySQL: ")
-    conn = mysql.connector.connect(user="root", password="Laiyinkoon3!",
+    conn = mysql.connector.connect(user="root", password="mati11a",
                                    host='127.0.0.1', database="WarehouseSystem")
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:  # If the username or password is wrong, it's caught here
@@ -218,11 +218,23 @@ def get_orders():
     if len(data) == 0:
         return jsonify({'message': "There are no orders in the system."})
     else:
-        cursor.execute("SELECT * FROM ItemsOrdered ORDER BY orderID")
-        data += cursor.fetchall()
+        #cursor.execute("SELECT * FROM ItemsOrdered ORDER BY orderID")
+        #data += cursor.fetchall()
         cursor.close()
         return jsonify(data), 200
 
+@app.route("/orders/get_items_in_orders", methods=['GET'])
+def get_items_in_orders():
+    data = request.json
+    orderID = data.get("orderID")
+    if orderID == "":
+        return jsonify({'message': 'orderID is a required field'}), 400
+    else:
+        cursor = conn.cursor()
+        cursor.execute("SELECT i.itemName, o.itemID, o.itemQuantity FROM Item i INNER JOIN ItemsOrdered o ON i.itemID = o.itemID WHERE orderID = %s", (orderID,))
+        data = cursor.fetchall()
+        cursor.close()
+        return jsonify(data), 200
 
 @app.route('/orders/delete_order', methods=['DELETE'])
 def delete_order():
