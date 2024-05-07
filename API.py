@@ -407,6 +407,29 @@ def create_order():
         cursor.close()
 
 
+@app.route("/orders/add_item_to_order", methods=['POST'])
+def add_item_to_order():
+    data = request.json
+    orderID = data.get("orderID")
+    itemID = data.get("itemID")
+    itemQuantity = data.get("itemQuantity")
+
+    if orderID == "" or itemID == "" or itemQuantity == "":
+        return jsonify({'message': 'Missing a field.'}), 400
+
+    try:
+        cursor = conn.cursor()
+
+        insert_query = ("Insert into ItemsOrdered (orderID, itemID, itemQuantity) values (%s, %s, %s)")
+        cursor.execute(insert_query, (orderID, itemID, itemQuantity))
+        conn.commit()
+        return jsonify({'message': 'Data added successfully'}), 201
+    except Exception as e:
+        return jsonify({'message': 'Failed to add data', 'error': str(e)}), 500
+    finally:
+        cursor.close()
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=105, debug=True)
 
