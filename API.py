@@ -419,9 +419,18 @@ def add_item_to_order():
 
     try:
         cursor = conn.cursor()
+        cursor.execute("SELECT itemQuantity FROM ItemsOrdered WHERE orderID = %s AND itemID = %s", (orderID, itemID))
+        existing_quantity = cursor.fetchone()
 
-        insert_query = ("Insert into ItemsOrdered (orderID, itemID, itemQuantity) values (%s, %s, %s)")
-        cursor.execute(insert_query, (orderID, itemID, itemQuantity))
+        if existing_quantity:
+            # If the item exists, add the entered number to total ItemQuantity
+            new_quantity = int(existing_quantity[0]) + int(itemQuantity)
+            update_query = "UPDATE ItemsOrdered SET itemQuantity = %s WHERE orderID = %s AND itemID = %s"
+            cursor.execute(update_query, (new_quantity, orderID, itemID))
+        else:
+            # If the item does not exist, insert a new row
+            insert_query = "INSERT INTO ItemsOrdered (orderID, itemID, itemQuantity) VALUES (%s, %s, %s)"
+            cursor.execute(insert_query, (orderID, itemID, itemQuantity))
         conn.commit()
         return jsonify({'message': 'Data added successfully'}), 201
     except Exception as e:
@@ -449,6 +458,9 @@ def delete_item_from_order():
         return jsonify({'message': 'Failed to delete data', 'error': str(e)}), 500
     finally:
         cursor.close()
+
+
+
 
 
 if __name__ == '__main__':
