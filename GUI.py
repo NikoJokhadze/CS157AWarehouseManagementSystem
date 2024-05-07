@@ -6,6 +6,8 @@ import requests
 
 from time import sleep
 
+import sv_ttk
+
 root = Tk()
 root.geometry("900x700")
 root.resizable(False, False)
@@ -51,24 +53,26 @@ def login():
             login_button.configure(text="Wrong", bg="red")
             login_button.after(1000, lambda: login_button.configure(text="Enter", bg="#F0F0F0"))
 
-    label = Label(loginFrame, text="Login", font=title)
+    label = ttk.Label(loginFrame, text="Login", font=title)
     label.grid(row=0, column=0, pady=(0, 150))
 
-    login_label = Label(loginFrame, text="Username", font=text)
+    login_label = ttk.Label(loginFrame, text="Username", font=text)
     login_label.grid(row=1, column=0)
 
-    user_enter = Entry(loginFrame, font=("Arial", 30))
+    user_enter = ttk.Entry(loginFrame, font=("Arial", 30))
     user_enter.grid(row=2, column=0, pady=(0, 100))
 
-    pass_label = Label(loginFrame, text="Password", font=text)
+    pass_label = ttk.Label(loginFrame, text="Password", font=text)
     pass_label.grid(row=3, column=0)
 
-    pass_enter = Entry(loginFrame, show="*", font=("Arial", 30))
+    pass_enter = ttk.Entry(loginFrame, show="*", font=("Arial", 30))
     pass_enter.grid(row=4, column=0)
 
-    login_button = Button(loginFrame, text="Enter", command=test_login, font=title)
+    login_button = Button(loginFrame, text="Enter", command=test_login,
+                           font=title)
     login_button.grid(row=5, column=0, pady=(150, 0))
 
+    sv_ttk.set_theme("dark")
 
 def main():
     items_button = Button(mainFrame, text="Items",
