@@ -27,6 +27,7 @@ createOrderFrame = Frame(root)
 sv_ttk.set_theme("dark")
 title = ("Arial", 25)
 text = ("Arial", 12)
+entry = ("Arial", 15)
 s = ttk.Style()
 s.configure('my.TButton', font=('Arial', 25))
 
@@ -146,7 +147,7 @@ def orders():
     label = Label(ordersFrame, text="Order ID", font=text)
     label.grid(row=2, column=0, pady=(10, 0))
 
-    user_enter = Entry(ordersFrame, font=("Arial", 15))
+    user_enter = Entry(ordersFrame, font=entry)
     user_enter.grid(row=3, column=0, pady=(0, 25))
 
     search_button = ttk.Button(ordersFrame, text="Search Items",
@@ -192,22 +193,22 @@ def create_order():
 
     label = Label(createOrderFrame, text="Order Status", font=text)
     label.grid(row=3, column=0, pady=(0, 0))
-    order_stat_enter = Entry(createOrderFrame, font=("Arial", 15))
+    order_stat_enter = Entry(createOrderFrame, font=entry)
     order_stat_enter.grid(row=4, column=0, pady=(0, 25))
 
     label = Label(createOrderFrame, text="Departure Time", font=text)
     label.grid(row=5, column=0, pady=(0, 0))
-    dep_time_enter = Entry(createOrderFrame, font=("Arial", 15))
+    dep_time_enter = Entry(createOrderFrame, font=entry)
     dep_time_enter.grid(row=6, column=0, pady=(0, 25))
 
     label = Label(createOrderFrame, text="Delivery Address ID", font=text)
     label.grid(row=7, column=0, pady=(0, 0))
-    cap_entry = Entry(createOrderFrame, font=("Arial", 15))
+    cap_entry = Entry(createOrderFrame, font=entry)
     cap_entry.grid(row=8, column=0, pady=(0, 25))
 
     label = Label(createOrderFrame, text="Handler ID", font=text)
     label.grid(row=9, column=0, pady=(0, 0))
-    hand_enter = Entry(createOrderFrame, font=("Arial", 15))
+    hand_enter = Entry(createOrderFrame, font=entry)
     hand_enter.grid(row=10, column=0, pady=(0, 25))
 
 
@@ -276,13 +277,13 @@ def order_items(temp):
     label = Label(orderItemsFrame, text="Enter Item ID", font=text)
     label.grid(row=2, column=0, pady=(20, 0))
 
-    item_enter = Entry(orderItemsFrame, font=("Arial", 15))
+    item_enter = Entry(orderItemsFrame, font=entry)
     item_enter.grid(row=3, column=0, pady=(0, 0))
 
     label = Label(orderItemsFrame, text="Enter Quantity", font=text)
     label.grid(row=4, column=0, pady=(20, 0))
 
-    qua_enter = Entry(orderItemsFrame, font=("Arial", 15))
+    qua_enter = Entry(orderItemsFrame, font=entry)
     qua_enter.grid(row=5, column=0, pady=(0, 0))
 
     add_button = ttk.Button(orderItemsFrame, text="Add",
@@ -345,7 +346,7 @@ def warehouse():
     label = Label(warehousesFrame, text="Warehouse ID", font=text)
     label.grid(row=2, column=0, pady=(25, 0))
 
-    user_enter = Entry(warehousesFrame, font=("Arial", 15))
+    user_enter = Entry(warehousesFrame, font=entry)
     user_enter.grid(row=3, column=0, pady=(0, 25))
 
     update_ware_button = ttk.Button(warehousesFrame, text="Update Warehouse",
@@ -381,32 +382,32 @@ def update_warehouse(temp):
 
     label = Label(update_ware, text="Warehouse Address ID", font=text)
     label.grid(row=3, column=0, pady=(0, 0))
-    add_id_enter = Entry(update_ware, font=("Arial", 15))
+    add_id_enter = Entry(update_ware, font=entry)
     add_id_enter.grid(row=4, column=0, pady=(0, 25))
 
     label = Label(update_ware, text="Capacity", font=text)
     label.grid(row=5, column=0, pady=(0, 0))
-    capacity_enter = Entry(update_ware, font=("Arial", 15))
+    capacity_enter = Entry(update_ware, font=entry)
     capacity_enter.grid(row=6, column=0, pady=(0, 25))
 
     label = Label(update_ware, text="Address Number", font=text)
     label.grid(row=7, column=0, pady=(0, 0))
-    add_num_enter = Entry(update_ware, font=("Arial", 15))
+    add_num_enter = Entry(update_ware, font=entry)
     add_num_enter.grid(row=8, column=0, pady=(0, 25))
 
     label = Label(update_ware, text="Street", font=text)
     label.grid(row=9, column=0, pady=(0, 0))
-    street_enter = Entry(update_ware, font=("Arial", 15))
+    street_enter = Entry(update_ware, font=entry)
     street_enter.grid(row=10, column=0, pady=(0, 25))
 
     label = Label(update_ware, text="City", font=text)
     label.grid(row=11, column=0, pady=(0, 0))
-    city_enter = Entry(update_ware, font=("Arial", 15))
+    city_enter = Entry(update_ware, font=entry)
     city_enter.grid(row=12, column=0, pady=(0, 25))
 
     label = Label(update_ware, text="Zip Code", font=text)
     label.grid(row=13, column=0, pady=(0, 0))
-    zip_enter = Entry(update_ware, font=("Arial", 15))
+    zip_enter = Entry(update_ware, font=entry)
     zip_enter.grid(row=14, column=0, pady=(0, 25))
 
     ware_update = ttk.Button(update_ware, text="Update Warehouse",
@@ -501,22 +502,22 @@ def add_item():
 
     label = Label(addItemsFrame, text="Warehouse ID", font=text)
     label.grid(row=1, column=0, pady=(0, 0))
-    warehouse_id_enter = Entry(addItemsFrame, font=("Arial", 15))
+    warehouse_id_enter = Entry(addItemsFrame, font=entry)
     warehouse_id_enter.grid(row=2, column=0, pady=(0, 25))
 
     label = Label(addItemsFrame, text="Item ID", font=text)
     label.grid(row=3, column=0, pady=(0, 0))
-    item_id_enter = Entry(addItemsFrame, font=("Arial", 15))
+    item_id_enter = Entry(addItemsFrame, font=entry)
     item_id_enter.grid(row=4, column=0, pady=(0, 25))
 
     label = Label(addItemsFrame, text="Item Location", font=text)
     label.grid(row=7, column=0, pady=(0, 0))
-    item_loc_enter = Entry(addItemsFrame, font=("Arial", 15))
+    item_loc_enter = Entry(addItemsFrame, font=entry)
     item_loc_enter.grid(row=8, column=0, pady=(0, 25))
 
     label = Label(addItemsFrame, text="Item Quantity", font=text)
     label.grid(row=9, column=0, pady=(0, 0))
-    item_quantity_enter = Entry(addItemsFrame, font=("Arial", 15))
+    item_quantity_enter = Entry(addItemsFrame, font=entry)
     item_quantity_enter.grid(row=10, column=0, pady=(0, 25))
 
     label_response = Label(addItemsFrame, text="", font=text)
@@ -548,17 +549,17 @@ def create_item():
 
     label = Label(createItemsFrame, text="Item Name", font=text)
     label.grid(row=1, column=0, pady=(0, 0))
-    item_name_enter = Entry(createItemsFrame, font=("Arial", 15))
+    item_name_enter = Entry(createItemsFrame, font=entry)
     item_name_enter.grid(row=2, column=0, pady=(0, 25))
 
     label = Label(createItemsFrame, text="Item Weight", font=text)
     label.grid(row=3, column=0, pady=(0, 0))
-    item_weight_enter = Entry(createItemsFrame, font=("Arial", 15))
+    item_weight_enter = Entry(createItemsFrame, font=entry)
     item_weight_enter.grid(row=4, column=0, pady=(0, 25))
 
     label = Label(createItemsFrame, text="Item Price", font=text)
     label.grid(row=5, column=0, pady=(0, 0))
-    item_price_enter = Entry(createItemsFrame, font=("Arial", 15))
+    item_price_enter = Entry(createItemsFrame, font=entry)
     item_price_enter.grid(row=6, column=0, pady=(0, 25))
 
     label_response = Label(createItemsFrame, text="", font=text)
@@ -614,7 +615,7 @@ def employee():
     label = Label(employeesFrame, text="Username", font=text)
     label.grid(row=2, column=0, pady=(25, 0))
 
-    user_enter = Entry(employeesFrame, font=("Arial", 15))
+    user_enter = Entry(employeesFrame, font=entry)
     user_enter.grid(row=3, column=0, pady=(0, 25))
 
     update_emp_button = ttk.Button(employeesFrame, text="Update Employee",
@@ -663,32 +664,32 @@ def create_employee():
 
     label = Label(create_emp, text="First Name", font=text)
     label.grid(row=1, column=0, pady=(0, 0))
-    first_enter = Entry(create_emp, font=("Arial", 15))
+    first_enter = Entry(create_emp, font=entry)
     first_enter.grid(row=2, column=0, pady=(0, 25))
 
     label = Label(create_emp, text="Middle Name", font=text)
     label.grid(row=3, column=0, pady=(0, 0))
-    mid_enter = Entry(create_emp, font=("Arial", 15))
+    mid_enter = Entry(create_emp, font=entry)
     mid_enter.grid(row=4, column=0, pady=(0, 25))
 
     label = Label(create_emp, text="Last Name", font=text)
     label.grid(row=5, column=0, pady=(0, 0))
-    last_enter = Entry(create_emp, font=("Arial", 15))
+    last_enter = Entry(create_emp, font=entry)
     last_enter.grid(row=6, column=0, pady=(0, 25))
 
     label = Label(create_emp, text="Job Title", font=text)
     label.grid(row=7, column=0, pady=(0, 0))
-    job_enter = Entry(create_emp, font=("Arial", 15))
+    job_enter = Entry(create_emp, font=entry)
     job_enter.grid(row=8, column=0, pady=(0, 25))
 
     label = Label(create_emp, text="Username", font=text)
     label.grid(row=9, column=0, pady=(0, 0))
-    user_enter = Entry(create_emp, font=("Arial", 15))
+    user_enter = Entry(create_emp, font=entry)
     user_enter.grid(row=10, column=0, pady=(0, 25))
 
     label = Label(create_emp, text="Password", font=text)
     label.grid(row=11, column=0, pady=(0, 0))
-    pass_enter = Entry(create_emp, font=("Arial", 15))
+    pass_enter = Entry(create_emp, font=entry)
     pass_enter.grid(row=12, column=0, pady=(0, 0))
 
     label_response = Label(create_emp, font=text)
@@ -734,7 +735,7 @@ def update_employee(temp):
     label = Label(update_emp, text="Username", font=text)
     label.grid(row=1, column=0, pady=(0, 0))
 
-    user_enter = Entry(update_emp, font=("Arial", 15))
+    user_enter = Entry(update_emp, font=entry)
     user_enter.grid(row=2, column=0, pady=(0, 0))
 
     user_update = ttk.Button(update_emp, text="Update Username",
@@ -746,7 +747,7 @@ def update_employee(temp):
     label = Label(update_emp, text="Job", font=text)
     label.grid(row=4, column=0, pady=(0, 0))
 
-    job_enter = Entry(update_emp, font=("Arial", 15))
+    job_enter = Entry(update_emp, font=entry)
     job_enter.grid(row=5, column=0, pady=(0, 0))
 
     job_update = ttk.Button(update_emp, text="Update Job",
@@ -758,13 +759,13 @@ def update_employee(temp):
     label = Label(update_emp, text="Old Password", font=text)
     label.grid(row=7, column=0, pady=(0, 0))
 
-    password_old = Entry(update_emp, font=("Arial", 15))
+    password_old = Entry(update_emp, font=entry)
     password_old.grid(row=8, column=0, pady=(0, 0))
 
     label = Label(update_emp, text="New Password", font=text)
     label.grid(row=9, column=0, pady=(0, 0))
 
-    password_new = Entry(update_emp, font=("Arial", 15))
+    password_new = Entry(update_emp, font=entry)
     password_new.grid(row=10, column=0, pady=(0, 0))
 
     password_update = ttk.Button(update_emp, text="Update Password",
