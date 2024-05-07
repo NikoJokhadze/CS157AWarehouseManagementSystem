@@ -107,6 +107,11 @@ def main():
     log_out_button.grid(row=4, column=0, pady=(25, 0))
 
 def orders():
+    def del_order():
+        requests.delete("http://127.0.0.1:105/orders/delete_order", json={"orderID": user_enter.get()})
+        clear_frame(ordersFrame)
+        orders()
+
     label = Label(ordersFrame, text="This the order frame", font=title)
     label.grid(row=0, column=0, pady=(0, 100))
 
@@ -156,29 +161,89 @@ def orders():
                                                 create_order(),
                                                 clear_frame(ordersFrame)],
                                font=("Arial", 20))
-    search_button.grid(row=5, column=0, pady=(50, 0))
+    search_button.grid(row=6, column=0, pady=(50, 0))
+
+    delete_button = Button(ordersFrame, text="Delete Order",
+                               command=lambda: [del_order()],
+                               font=("Arial", 20))
+    delete_button.grid(row=5, column=0, pady=(50, 0))
 
     back_button = Button(ordersFrame, text="Back",
                          command=lambda: [mainFrame.grid(),
                                           ordersFrame.grid_forget(),
                                           clear_frame(ordersFrame)],
                          font=("Arial", 20))
-    back_button.grid(row=6, column=0, pady=(50, 0))
+    back_button.grid(row=7, column=0, pady=(50, 0))
 
 def create_order():
     def create():
-        pass
+        response = requests.post("http://127.0.0.1:105/orders/create_order",
+                                json={"orderStatus": order_stat_enter.get(),
+                                      "departureTime": dep_time_enter.get(),
+                                      "deliveryAddressID": cap_entry.get(),
+                                      "handlerID": hand_enter.get()})
+        response = json.loads(response.text)
+        label_response.config(text=response["message"])
 
-    label = Label(orderItemsFrame, text="This is create order", font=title)
+    label = Label(createOrderFrame, text="This is create order", font=title)
     label.grid(row=0, column=0, pady=(0, 100))
 
+    label = Label(createOrderFrame, text="Order Status", font=text)
+    label.grid(row=3, column=0, pady=(0, 0))
+    order_stat_enter = Entry(createOrderFrame, font=("Arial", 15))
+    order_stat_enter.grid(row=4, column=0, pady=(0, 50))
 
+    label = Label(createOrderFrame, text="Departure Time", font=text)
+    label.grid(row=5, column=0, pady=(0, 0))
+    dep_time_enter = Entry(createOrderFrame, font=("Arial", 15))
+    dep_time_enter.grid(row=6, column=0, pady=(0, 50))
+
+    label = Label(createOrderFrame, text="Delivery Address ID", font=text)
+    label.grid(row=7, column=0, pady=(0, 0))
+    cap_entry = Entry(createOrderFrame, font=("Arial", 15))
+    cap_entry.grid(row=8, column=0, pady=(0, 50))
+
+    label = Label(createOrderFrame, text="Handler ID", font=text)
+    label.grid(row=9, column=0, pady=(0, 0))
+    hand_enter = Entry(createOrderFrame, font=("Arial", 15))
+    hand_enter.grid(row=10, column=0, pady=(0, 50))
+
+
+    create_button = Button(createOrderFrame, text="Create",
+                         command=lambda: [create()],
+                         font=("Arial", 20))
+    create_button.grid(row=14, column=0, pady=(25, 0))
+
+    label_response = Label(createOrderFrame, text="", font=text)
+    label_response.grid(row=16, column=0, pady=(10, 10))
+
+    back_button = Button(createOrderFrame, text="Back",
+                         command=lambda: [ordersFrame.grid(),
+                                          createOrderFrame.grid_forget(),
+                                          orders(),
+                                          clear_frame(createOrderFrame)],
+                         font=("Arial", 20))
+    back_button.grid(row=15, column=0, pady=(25, 0))
 
 def order_items(temp):
     def update():
-        pass
+        response = requests.post("http://127.0.0.1:105/orders/add_item_to_order",
+                                json={"orderID": temp,
+                                      "itemID": item_enter.get(),
+                                      "itemQuantity": qua_enter.get()})
+        response = json.loads(response.text)
+        label_response.config(text=response["message"])
+        clear_frame(ordersFrame)
+        order_items(temp)
     def delete():
-        pass
+        response = requests.delete("http://127.0.0.1:105/orders/delete_item_from_order",
+                                 json={"orderID": temp,
+                                       "itemID": item_enter.get()})
+        response = json.loads(response.text)
+        label_response.config(text=response["message"])
+        clear_frame(ordersFrame)
+        order_items(temp)
+
     label = Label(orderItemsFrame, text=f"This is order {temp}", font=title)
     label.grid(row=0, column=0, pady=(0, 100))
 
@@ -208,14 +273,14 @@ def order_items(temp):
     label = Label(orderItemsFrame, text="Enter Item ID", font=text)
     label.grid(row=2, column=0, pady=(25, 0))
 
-    user_enter = Entry(orderItemsFrame, font=("Arial", 15))
-    user_enter.grid(row=3, column=0, pady=(0, 0))
+    item_enter = Entry(orderItemsFrame, font=("Arial", 15))
+    item_enter.grid(row=3, column=0, pady=(0, 0))
 
     label = Label(orderItemsFrame, text="Enter Quantity", font=text)
     label.grid(row=4, column=0, pady=(25, 0))
 
-    user_enter = Entry(orderItemsFrame, font=("Arial", 15))
-    user_enter.grid(row=5, column=0, pady=(0, 0))
+    qua_enter = Entry(orderItemsFrame, font=("Arial", 15))
+    qua_enter.grid(row=5, column=0, pady=(0, 0))
 
     add_button = Button(orderItemsFrame, text="Add",
                          command=lambda: [update()],
@@ -227,6 +292,8 @@ def order_items(temp):
                          font=("Arial", 20))
     delete_button.grid(row=14, column=0, pady=(25, 0))
 
+    label_response = Label(orderItemsFrame, text="", font=text)
+    label_response.grid(row=15, column=0, pady=(10, 10))
 
 
     back_button = Button(orderItemsFrame, text="Back",
@@ -235,7 +302,7 @@ def order_items(temp):
                                           orders(),
                                           clear_frame(orderItemsFrame)],
                          font=("Arial", 20))
-    back_button.grid(row=15, column=0, pady=(25, 0))
+    back_button.grid(row=16, column=0, pady=(25, 0))
 
 
 def warehouse():
@@ -366,7 +433,7 @@ def item():
     scroll.grid(row=1, column=1, pady=(0, 0), sticky="ns")
 
     box.configure(yscrollcommand=scroll.set)
-    box["columns"] = ("1", "2", "3", "4", "5", "6")
+    box["columns"] = ("1", "2", "3", "4", "5", "6", "7")
     box['show'] = 'headings'
 
     box.column("1", width=50)
@@ -375,6 +442,8 @@ def item():
     box.column("4", width=70)
     box.column("5", width=70)
     box.column("6", width=100)
+    box.column("7", width=100)
+
 
     box.heading("1", text="ID")
     box.heading("2", text="Name")
@@ -382,6 +451,8 @@ def item():
     box.heading("4", text="Price")
     box.heading("5", text="Quantity")
     box.heading("6", text="WarehouseID")
+    box.heading("7", text="ItemLocation")
+
 
     response = requests.get("http://127.0.0.1:105/item/get_items")
     for i in response.json():

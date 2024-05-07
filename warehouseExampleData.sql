@@ -32,7 +32,8 @@ insert into Login (username, hashedPassword, employeeId) values
     ("joeswan", "JoeSon", 1004),
     ("marjonpau", "johnmArk", 1005),
     ("heims", "uniQue2$", 1006),
-    ("erikDen", "newPassword@3", 1007);
+    ("erikDen", "newPassword@3", 1007),
+    ("test", "admin", 1008);
 
 insert into Item (itemName, itemWeight, itemPrice) values
     ("Nintendo Switch", 0.66, 299.99),
@@ -50,7 +51,7 @@ insert into Item (itemName, itemWeight, itemPrice) values
 insert into ItemInWarehouse (warehouseID, itemID, arrivalTime, itemLocation, itemQuantity) values
     (12345, 1, '2024-01-05', "B4", 300),
     (12345, 2, '2024-02-02', "C2", 400),
-    (12345, 3, '2024-02-03', "C3", 400),
+    (12345, 3, '2024-02-03', "C3", 400),1
     (12345, 4, '2022-10-20', "C1", 0),
     (12345, 8, '2024-01-27', "D3", 150),
     (12345, 9, '2022-09-23', "D4", 0),

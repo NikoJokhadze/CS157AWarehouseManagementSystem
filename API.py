@@ -264,7 +264,7 @@ def delete_order():
 @app.route("/item/get_items", methods=['GET'])
 def get_items():
     cursor = conn.cursor()
-    cursor.execute("""SELECT i.itemID, i.itemName, i.itemWeight, i.itemPrice, w.itemQuantity, w.warehouseID
+    cursor.execute("""SELECT i.itemID, i.itemName, i.itemWeight, i.itemPrice, w.itemQuantity, w.warehouseID, w.itemLocation
                    FROM Item i LEFT JOIN ItemInWarehouse w ON i.itemID = w.itemID""")
     data = cursor.fetchall()
     if len(data) == 0:
