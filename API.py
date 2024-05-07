@@ -8,7 +8,7 @@ from getpass import getpass
 
 try:  # Surrounding the connection in a try-except block to catch all connection errors
     #password = getpass("Enter your password for MySQL: ")
-    conn = mysql.connector.connect(user="root", password="mati11a",
+    conn = mysql.connector.connect(user="root", password="NikoMySQL_13",
                                    host='127.0.0.1', database="WarehouseSystem")
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:  # If the username or password is wrong, it's caught here
@@ -383,6 +383,28 @@ def get_items_by_name():
         data += cursor.fetchall()
         cursor.close()
         return jsonify(data), 200
+
+
+@app.route("/orders/create_order", methods=['POST'])
+def create_order():
+    data = request.json
+    orderStatus = data.get("orderStatus")
+    departureTime = data.get("departureTime")
+    deliveryAddressID = data.get("deliveryAddressID")
+    handlerID = data.get("handlerID")
+
+    try:
+        cursor = conn.cursor()
+
+        insert_query = ("Insert into Orders (orderStatus, departureTime, deliveryAddressID, handlerID) "
+                        "values (%s, %s, %s, %s)")
+        cursor.execute(insert_query, (orderStatus, departureTime, deliveryAddressID, handlerID))
+        conn.commit()
+        return jsonify({'message': 'Data added successfully'}), 201
+    except Exception as e:
+        return jsonify({'message': 'Failed to add data', 'error': str(e)}), 500
+    finally:
+        cursor.close()
 
 
 if __name__ == '__main__':
