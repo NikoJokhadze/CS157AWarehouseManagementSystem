@@ -265,18 +265,11 @@ def delete_order():
 def get_items():
     cursor = conn.cursor()
     cursor.execute("""SELECT i.itemID, i.itemName, i.itemWeight, i.itemPrice, w.itemQuantity, w.warehouseID
-                   FROM Item i INNER JOIN ItemInWarehouse w ON i.itemID = w.itemID""")
+                   FROM Item i LEFT JOIN ItemInWarehouse w ON i.itemID = w.itemID""")
     data = cursor.fetchall()
     if len(data) == 0:
         return jsonify({'message': "There are no items in the system."})
     else:
-        # The following command will get all ordered items and display the total amount of those items that are
-        # on order status across all orders
-        cursor.execute("""SELECT i.itemName, SUM(o.itemQuantity) AS totalCountOrdered
-                       FROM Item i INNER JOIN ItemsOrdered o 
-                       ON i.itemID = o.itemID 
-                       GROUP BY itemName""")
-        data += cursor.fetchall()
         cursor.close()
         return jsonify(data), 200
 
