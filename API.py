@@ -430,6 +430,27 @@ def add_item_to_order():
         cursor.close()
 
 
+@app.route('/orders/delete_item_from_order', methods=['DELETE'])
+def delete_item_from_order():
+    data = request.json
+    orderID = data.get("orderID")
+    itemID = data.get("itemID")
+
+    if orderID == "" or itemID == "":
+        return jsonify({'message': 'Missing fields.'}), 400
+
+    try:
+        cursor = conn.cursor()
+        delete_query = "DELETE from ItemsOrdered Where itemID = %s"
+        cursor.execute(delete_query, (itemID,))
+        conn.commit()
+        return jsonify({'message': 'Data deleted successfully'}), 200
+    except Exception as e:
+        return jsonify({'message': 'Failed to delete data', 'error': str(e)}), 500
+    finally:
+        cursor.close()
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=105, debug=True)
 
