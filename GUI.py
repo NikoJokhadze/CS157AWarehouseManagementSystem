@@ -20,6 +20,9 @@ update_emp = Frame(root)
 create_emp = Frame(root)
 update_ware = Frame(root)
 orderItemsFrame = Frame(root)
+createItemsFrame = Frame(root)
+addItemsFrame = Frame(root)
+createOrderFrame = Frame(root)
 
 title = ("Arial", 25)
 text = ("Arial", 12)
@@ -43,27 +46,28 @@ def login():
             main()
             loginFrame.grid_forget()
             mainFrame.grid()
+            clear_frame(loginFrame)
         else:
             login_button.configure(text="Wrong", bg="red")
             login_button.after(1000, lambda: login_button.configure(text="Enter", bg="#F0F0F0"))
 
     label = Label(loginFrame, text="Login", font=title)
-    label.grid(row=0, column=0, pady=(0, 100))
+    label.grid(row=0, column=0, pady=(0, 200))
 
     login_label = Label(loginFrame, text="Username", font=text)
     login_label.grid(row=1, column=0)
 
-    user_enter = Entry(loginFrame, font=("Arial", 15))
-    user_enter.grid(row=2, column=0, pady=(0, 25))
+    user_enter = Entry(loginFrame, font=("Arial", 30))
+    user_enter.grid(row=2, column=0, pady=(0, 100))
 
     pass_label = Label(loginFrame, text="Password", font=text)
     pass_label.grid(row=3, column=0)
 
-    pass_enter = Entry(loginFrame, show="*", font=("Arial", 15))
+    pass_enter = Entry(loginFrame, show="*", font=("Arial", 30))
     pass_enter.grid(row=4, column=0)
 
-    login_button = Button(loginFrame, text="Enter", command=test_login, font=("Arial", 20))
-    login_button.grid(row=5, column=0, pady=(50, 0))
+    login_button = Button(loginFrame, text="Enter", command=test_login, font=title)
+    login_button.grid(row=5, column=0, pady=(200, 0))
 
 
 def main():
@@ -95,6 +99,12 @@ def main():
                               font=("Arial", 20))
     employees_button.grid(row=3, column=0, pady=(50, 0))
 
+    log_out_button = Button(mainFrame, text="Log Out",
+                           command=lambda: [loginFrame.grid(),
+                                            mainFrame.grid_forget(),
+                                            login()],
+                           font=("Arial", 20))
+    log_out_button.grid(row=4, column=0, pady=(25, 0))
 
 def orders():
     label = Label(ordersFrame, text="This the order frame", font=title)
@@ -126,8 +136,11 @@ def orders():
     for i in response.json():
         box.insert("", "end", values=i)
 
+    label = Label(ordersFrame, text="Order ID", font=text)
+    label.grid(row=2, column=0, pady=(25, 0))
+
     user_enter = Entry(ordersFrame, font=("Arial", 15))
-    user_enter.grid(row=2, column=0, pady=(50, 0))
+    user_enter.grid(row=3, column=0, pady=(0, 25))
 
     search_button = Button(ordersFrame, text="Search Items",
                                command=lambda: [orderItemsFrame.grid(),
@@ -135,17 +148,38 @@ def orders():
                                                 order_items(user_enter.get()),
                                                 clear_frame(ordersFrame)],
                                font=("Arial", 20))
-    search_button.grid(row=3, column=0, pady=(0, 0))
+    search_button.grid(row=4, column=0, pady=(0, 0))
+
+    search_button = Button(ordersFrame, text="Create Order",
+                               command=lambda: [createOrderFrame.grid(),
+                                                ordersFrame.grid_forget(),
+                                                create_order(),
+                                                clear_frame(ordersFrame)],
+                               font=("Arial", 20))
+    search_button.grid(row=5, column=0, pady=(50, 0))
 
     back_button = Button(ordersFrame, text="Back",
                          command=lambda: [mainFrame.grid(),
                                           ordersFrame.grid_forget(),
                                           clear_frame(ordersFrame)],
                          font=("Arial", 20))
-    back_button.grid(row=5, column=0, pady=(50, 0))
+    back_button.grid(row=6, column=0, pady=(50, 0))
+
+def create_order():
+    def create():
+        pass
+
+    label = Label(orderItemsFrame, text="This is create order", font=title)
+    label.grid(row=0, column=0, pady=(0, 100))
+
+
 
 def order_items(temp):
-    label = Label(orderItemsFrame, text="This the warehouse frame", font=title)
+    def update():
+        pass
+    def delete():
+        pass
+    label = Label(orderItemsFrame, text=f"This is order {temp}", font=title)
     label.grid(row=0, column=0, pady=(0, 100))
 
     box = ttk.Treeview(orderItemsFrame, selectmode="browse")
@@ -171,13 +205,37 @@ def order_items(temp):
     for i in response.json():
         box.insert("", "end", values=i)
 
+    label = Label(orderItemsFrame, text="Enter Item ID", font=text)
+    label.grid(row=2, column=0, pady=(25, 0))
+
+    user_enter = Entry(orderItemsFrame, font=("Arial", 15))
+    user_enter.grid(row=3, column=0, pady=(0, 0))
+
+    label = Label(orderItemsFrame, text="Enter Quantity", font=text)
+    label.grid(row=4, column=0, pady=(25, 0))
+
+    user_enter = Entry(orderItemsFrame, font=("Arial", 15))
+    user_enter.grid(row=5, column=0, pady=(0, 0))
+
+    add_button = Button(orderItemsFrame, text="Add",
+                         command=lambda: [update()],
+                         font=("Arial", 20))
+    add_button.grid(row=13, column=0, pady=(25, 0))
+
+    delete_button = Button(orderItemsFrame, text="Delete",
+                         command=lambda: [delete()],
+                         font=("Arial", 20))
+    delete_button.grid(row=14, column=0, pady=(25, 0))
+
+
+
     back_button = Button(orderItemsFrame, text="Back",
                          command=lambda: [ordersFrame.grid(),
                                           orderItemsFrame.grid_forget(),
                                           orders(),
                                           clear_frame(orderItemsFrame)],
                          font=("Arial", 20))
-    back_button.grid(row=5, column=0, pady=(50, 0))
+    back_button.grid(row=15, column=0, pady=(25, 0))
 
 
 def warehouse():
@@ -212,16 +270,20 @@ def warehouse():
     for i in response.json():
         box.insert("", "end", values=i)
 
-    user_enter = Entry(warehousesFrame, font=("Arial", 15))
-    user_enter.grid(row=2, column=0, pady=(50, 0))
 
-    update_emp_button = Button(warehousesFrame, text="Update Employee",
+    label = Label(warehousesFrame, text="Warehouse ID", font=text)
+    label.grid(row=2, column=0, pady=(25, 0))
+
+    user_enter = Entry(warehousesFrame, font=("Arial", 15))
+    user_enter.grid(row=3, column=0, pady=(0, 25))
+
+    update_emp_button = Button(warehousesFrame, text="Update Warehouse",
                                command=lambda: [update_ware.grid(),
                                                 warehousesFrame.grid_forget(),
                                                 update_warehouse(user_enter.get()),
                                                 clear_frame(warehousesFrame)],
                                font=("Arial", 20))
-    update_emp_button.grid(row=3, column=0, pady=(0, 0))
+    update_emp_button.grid(row=4, column=0, pady=(0, 0))
 
     back_button = Button(warehousesFrame, text="Back",
                          command=lambda: [mainFrame.grid(),
@@ -325,14 +387,120 @@ def item():
     for i in response.json():
         box.insert("", "end", values=i)
 
+    create_button = Button(itemsFrame, text="Add Item to Warehouse",
+                         command=lambda: [addItemsFrame.grid(),
+                                          itemsFrame.grid_forget(),
+                                          clear_frame(itemsFrame),
+                                          add_item()],
+                         font=("Arial", 20))
+    create_button.grid(row=7, column=0, pady=(50, 0))
+
+    create_button = Button(itemsFrame, text="Create Item",
+                         command=lambda: [createItemsFrame.grid(),
+                                          itemsFrame.grid_forget(),
+                                          clear_frame(itemsFrame),
+                                          create_item()],
+                         font=("Arial", 20))
+    create_button.grid(row=6, column=0, pady=(50, 0))
 
     back_button = Button(itemsFrame, text="Back",
                          command=lambda: [mainFrame.grid(),
                                           itemsFrame.grid_forget(),
                                           clear_frame(itemsFrame)],
                          font=("Arial", 20))
-    back_button.grid(row=7, column=0, pady=(50, 0))
+    back_button.grid(row=8, column=0, pady=(50, 0))
 
+def add_item():
+    def add():
+        response = requests.post("http://127.0.0.1:105/warehouse/add_items",
+                                 json={"warehouseID": warehouse_id_enter.get(),
+                                       "itemID": item_id_enter.get(),
+                                       "itemLocation": item_loc_enter.get(),
+                                       "itemQuantity": item_quantity_enter.get()})
+        response = json.loads(response.text)
+        label_response.config(text=response["message"])
+
+
+    label = Label(addItemsFrame, text="This the add item frame", font=title)
+    label.grid(row=0, column=0, pady=(0, 100))
+
+    label = Label(addItemsFrame, text="Warehouse ID", font=text)
+    label.grid(row=1, column=0, pady=(0, 0))
+    warehouse_id_enter = Entry(addItemsFrame, font=("Arial", 15))
+    warehouse_id_enter.grid(row=2, column=0, pady=(0, 25))
+
+    label = Label(addItemsFrame, text="Item ID", font=text)
+    label.grid(row=3, column=0, pady=(0, 0))
+    item_id_enter = Entry(addItemsFrame, font=("Arial", 15))
+    item_id_enter.grid(row=4, column=0, pady=(0, 25))
+
+    label = Label(addItemsFrame, text="Item Location", font=text)
+    label.grid(row=7, column=0, pady=(0, 0))
+    item_loc_enter = Entry(addItemsFrame, font=("Arial", 15))
+    item_loc_enter.grid(row=8, column=0, pady=(0, 25))
+
+    label = Label(addItemsFrame, text="Item Quantity", font=text)
+    label.grid(row=9, column=0, pady=(0, 0))
+    item_quantity_enter = Entry(addItemsFrame, font=("Arial", 15))
+    item_quantity_enter.grid(row=10, column=0, pady=(0, 25))
+
+    label_response = Label(addItemsFrame, text="", font=text)
+    label_response.grid(row=11, column=0, pady=(25, 25))
+
+    create_button = Button(addItemsFrame, text="Add",
+                         command=lambda: [add()],
+                         font=("Arial", 20))
+    create_button.grid(row=12, column=0, pady=(0, 0))
+
+    back_button = Button(addItemsFrame, text="Back",
+                         command=lambda: [itemsFrame.grid(),
+                                          addItemsFrame.grid_forget(),
+                                          clear_frame(addItemsFrame),
+                                          item()],
+                         font=("Arial", 20))
+    back_button.grid(row=13, column=0, pady=(50, 0))
+def create_item():
+    def create():
+        response = requests.post("http://127.0.0.1:105/item/create_item",
+                                 json={"itemName": item_name_enter.get(),
+                                       "itemWeight": item_weight_enter.get(),
+                                       "itemPrice": item_price_enter.get()})
+        response = json.loads(response.text)
+        label_response.config(text=response["message"])
+
+    label = Label(createItemsFrame, text="This the create item frame", font=title)
+    label.grid(row=0, column=0, pady=(0, 100))
+
+    label = Label(createItemsFrame, text="Item Name", font=text)
+    label.grid(row=1, column=0, pady=(0, 0))
+    item_name_enter = Entry(createItemsFrame, font=("Arial", 15))
+    item_name_enter.grid(row=2, column=0, pady=(0, 25))
+
+    label = Label(createItemsFrame, text="Item Weight", font=text)
+    label.grid(row=3, column=0, pady=(0, 0))
+    item_weight_enter = Entry(createItemsFrame, font=("Arial", 15))
+    item_weight_enter.grid(row=4, column=0, pady=(0, 25))
+
+    label = Label(createItemsFrame, text="Item Price", font=text)
+    label.grid(row=5, column=0, pady=(0, 0))
+    item_price_enter = Entry(createItemsFrame, font=("Arial", 15))
+    item_price_enter.grid(row=6, column=0, pady=(0, 25))
+
+    label_response = Label(createItemsFrame, text="", font=text)
+    label_response.grid(row=7, column=0, pady=(25, 25))
+
+    create_button = Button(createItemsFrame, text="Create",
+                         command=lambda: [create()],
+                         font=("Arial", 20))
+    create_button.grid(row=8, column=0, pady=(50, 0))
+
+    back_button = Button(createItemsFrame, text="Back",
+                         command=lambda: [itemsFrame.grid(),
+                                          createItemsFrame.grid_forget(),
+                                          clear_frame(createItemsFrame),
+                                          item()],
+                         font=("Arial", 20))
+    back_button.grid(row=9, column=0, pady=(50, 0))
 
 def employee():
     def del_emp():
@@ -367,8 +535,11 @@ def employee():
     for i in response.json():
         box.insert("", "end", values=i)
 
+    label = Label(employeesFrame, text="Username", font=text)
+    label.grid(row=2, column=0, pady=(25, 0))
+
     user_enter = Entry(employeesFrame, font=("Arial", 15))
-    user_enter.grid(row=2, column=0, pady=(50, 0))
+    user_enter.grid(row=3, column=0, pady=(0, 25))
 
     update_emp_button = Button(employeesFrame, text="Update Employee",
                                command=lambda: [update_emp.grid(),
@@ -376,12 +547,12 @@ def employee():
                                                 update_employee(user_enter.get()),
                                                 clear_frame(employeesFrame)],
                                font=("Arial", 20))
-    update_emp_button.grid(row=3, column=0, pady=(0, 0))
+    update_emp_button.grid(row=4, column=0, pady=(0, 0))
 
     del_button = Button(employeesFrame, text="Delete Employee",
                         command=lambda: [del_emp()],
                         font=("Arial", 20))
-    del_button.grid(row=4, column=0, pady=(50, 0))
+    del_button.grid(row=5, column=0, pady=(50, 0))
 
     cre_button = Button(employeesFrame, text="Create Employee",
                         command=lambda: [create_emp.grid(),
@@ -481,41 +652,53 @@ def update_employee(temp):
         response = json.loads(response.text)
         label_response.config(text=response["message"])
 
-    label = Label(update_emp, text=f"This Username {temp}", font=title)
-    label.grid(row=0, column=1, pady=(0, 0))
+    label = Label(update_emp, text=f"{temp}", font=title)
+    label.grid(row=0, column=0, pady=(0, 25))
+
+    label = Label(update_emp, text="Username", font=text)
+    label.grid(row=1, column=0, pady=(0, 0))
 
     user_enter = Entry(update_emp, font=("Arial", 15))
-    user_enter.grid(row=1, column=0, pady=(50, 0))
+    user_enter.grid(row=2, column=0, pady=(0, 0))
 
     user_update = Button(update_emp, text="Update Username",
                          command=lambda: [user_update.configure(text="Done"),
                                           up_user()],
                          font=("Arial", 20))
-    user_update.grid(row=1, column=2, pady=(50, 0))
+    user_update.grid(row=3, column=0, pady=(10, 100))
+
+    label = Label(update_emp, text="Job", font=text)
+    label.grid(row=4, column=0, pady=(0, 0))
 
     job_enter = Entry(update_emp, font=("Arial", 15))
-    job_enter.grid(row=2, column=0, pady=(50, 0))
+    job_enter.grid(row=5, column=0, pady=(0, 0))
 
     job_update = Button(update_emp, text="Update Job",
                         command=lambda: [job_update.configure(text="Done"),
                                          up_title()],
                         font=("Arial", 20))
-    job_update.grid(row=2, column=2, pady=(50, 0))
+    job_update.grid(row=6, column=0, pady=(10, 100))
+
+    label = Label(update_emp, text="Old Password", font=text)
+    label.grid(row=7, column=0, pady=(0, 0))
 
     password_old = Entry(update_emp, font=("Arial", 15))
-    password_old.grid(row=3, column=0, pady=(50, 0))
+    password_old.grid(row=8, column=0, pady=(0, 0))
+
+    label = Label(update_emp, text="New Password", font=text)
+    label.grid(row=9, column=0, pady=(0, 0))
 
     password_new = Entry(update_emp, font=("Arial", 15))
-    password_new.grid(row=3, column=1, pady=(50, 0))
+    password_new.grid(row=10, column=0, pady=(0, 0))
 
     password_update = Button(update_emp, text="Update Password",
                              command=lambda: [password_update.configure(text="Done"),
                                               up_pass()],
                              font=("Arial", 20))
-    password_update.grid(row=3, column=2, pady=(50, 0))
+    password_update.grid(row=11, column=0, pady=(10, 100))
 
     label_response = Label(update_emp, text="", font=text)
-    label_response.grid(row=4, column=1, pady=(0, 0))
+    label_response.grid(row=12, column=0, pady=(0, 0))
 
     back_button = Button(update_emp, text="Back",
                          command=lambda: [employeesFrame.grid(),
@@ -523,7 +706,7 @@ def update_employee(temp):
                                           employee(),
                                           clear_frame(update_emp)],
                          font=("Arial", 20))
-    back_button.grid(row=5, column=1, pady=(0, 0))
+    back_button.grid(row=13, column=0, pady=(0, 0))
 
 
 login()

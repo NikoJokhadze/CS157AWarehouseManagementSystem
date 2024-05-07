@@ -36,7 +36,6 @@ create table if not exists ItemInWarehouse (
     warehouseID int not null, -- Details which warehouse the item belongs in
     itemID int not null,
     arrivalTime date, -- Says when the item arrived at the warehouse
-    itemStatus varchar(99) not null, -- Tells if the item is in stock/out of stock
     itemLocation varchar(99) not null, -- Says where in the warehouse the item is stored in
     itemQuantity int not null default 0, -- Gives number of items in warehouse. We assume that all are in same location
     foreign key (warehouseID) references Warehouse(warehouseID),

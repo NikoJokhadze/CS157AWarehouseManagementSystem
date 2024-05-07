@@ -47,18 +47,18 @@ insert into Item (itemName, itemWeight, itemPrice) values
     ("Samsung Galaxy Tab", 1.04, 349.99),
     ("Canon ImageClass Printer", 64, 369.99);
 
-insert into ItemInWarehouse (warehouseID, itemID, arrivalTime, itemStatus, itemLocation, itemQuantity) values
-    (12345, 1, '2024-01-05', "In Stock", "B4", 300),
-    (12345, 2, '2024-02-02', "In Stock", "C2", 400),
-    (12345, 3, '2024-02-03', "In Stock", "C3", 400),
-    (12345, 4, '2022-10-20', "Out of Stock", "C1", 0),
-    (12345, 8, '2024-01-27', "In Stock", "D3", 150),
-    (12345, 9, '2022-09-23', "Out of Stock", "D4", 0),
-    (87439, 5, '2024-02-03', "In Stock", "A3", 800),
-    (87439, 6, '2024-02-04', "In Stock", "A4", 800),
-    (87439, 7, '2023-09-05', "In Stock", "A2", 3000),
-    (87439, 10, '2024-03-21', "In Stock", "B1", 600),
-    (87439, 11, '2024-02-29', "In Stock", "D2", 80);
+insert into ItemInWarehouse (warehouseID, itemID, arrivalTime, itemLocation, itemQuantity) values
+    (12345, 1, '2024-01-05', "B4", 300),
+    (12345, 2, '2024-02-02', "C2", 400),
+    (12345, 3, '2024-02-03', "C3", 400),
+    (12345, 4, '2022-10-20', "C1", 0),
+    (12345, 8, '2024-01-27', "D3", 150),
+    (12345, 9, '2022-09-23', "D4", 0),
+    (87439, 5, '2024-02-03', "A3", 800),
+    (87439, 6, '2024-02-04', "A4", 800),
+    (87439, 7, '2023-09-05', "A2", 3000),
+    (87439, 10, '2024-03-21', "B1", 600),
+    (87439, 11, '2024-02-29', "D2", 80);
 
 insert into Orders (orderStatus, departureTime, deliveryAddressID, handlerID) values
 	("Delivered", '2024-03-01', 504, 1007),

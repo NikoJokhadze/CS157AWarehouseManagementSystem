@@ -1,3 +1,5 @@
+from datetime import date
+
 import mysql.connector
 from mysql.connector import errorcode
 from flask import Flask, jsonify, request
@@ -307,16 +309,12 @@ def insert_items_in_warehouse():
     data = request.json
     warehouseID = data.get("warehouseID")
     itemID = data.get("itemID")
-    arrivalTime = data.get("arrivalTime")
-    itemStatus = data.get("itemStatus")
+    arrivalTime = date.today()
     itemLocation = data.get("itemLocation")
     itemQuantity = data.get("itemQuantity")
 
-    if warehouseID == "" or itemID == "" or arrivalTime == "" or itemStatus == ""\
-            or itemLocation == "" or itemQuantity == "":
-        return jsonify({'message': 'To insert an item in a warehouse, you must provide the itemID, the arrival time, '
-                                   'the item status, the location in the warehouse, and the total quantity to place'
-                                   'in the warehouse.'}), 400
+    if warehouseID == "" or itemID == "" or arrivalTime == "" or itemLocation == "" or itemQuantity == "":
+        return jsonify({'message': 'One of the required fields is missing'}), 400
 
     try:
         cursor = conn.cursor()
@@ -327,9 +325,9 @@ def insert_items_in_warehouse():
         if item == "":
             return jsonify({'message': f'Item with ID {itemID} does not exist in the Item table.'}), 404
 
-        insert_query = ("Insert into ItemInWarehouse (warehouseID, itemID, arrivalTime, itemStatus, itemLocation, "
-                        "itemQuantity) values (%s, %s, %s, %s, %s, %s)")
-        cursor.execute(insert_query, (warehouseID, itemID, arrivalTime, itemStatus, itemLocation, itemQuantity))
+        insert_query = ("Insert into ItemInWarehouse (warehouseID, itemID, arrivalTime, itemLocation, "
+                        "itemQuantity) values (%s, %s, %s, %s, %s)")
+        cursor.execute(insert_query, (warehouseID, itemID, arrivalTime,  itemLocation, itemQuantity))
         conn.commit()
         return jsonify({'message': 'Data added successfully'}), 201
     except Exception as e:
