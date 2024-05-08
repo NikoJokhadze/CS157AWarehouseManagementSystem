@@ -244,7 +244,7 @@ def insert_item():
 @app.route("/warehouse/get_warehouses", methods=['GET'])
 def get_warehouses():
     cursor = conn.cursor()
-    cursor.execute("SELECT w.warehouseID, w.capacity, a.addressNum, a.street, a.city, a.zipcode "
+    cursor.execute("SELECT w.warehouseID, w.capacity, a.addressNum, a.street, a.city, a.zipcode, a.addressID "
                    "FROM warehouse w "
                    "INNER JOIN addresses a "
                    "ON w.warehouseAddressID = a.addressID")

@@ -404,7 +404,7 @@ def warehouse():
     scroll.grid(row=1, column=1, pady=(0, 0), sticky="ns")
 
     box.configure(yscrollcommand=scroll.set)
-    box["columns"] = ("1", "2", "3", "4", "5", "6")
+    box["columns"] = ("1", "2", "3", "4", "5", "6", "7")
     box['show'] = 'headings'
 
     box.column("1", width=50)
@@ -413,6 +413,7 @@ def warehouse():
     box.column("4", width=200)
     box.column("5", width=200)
     box.column("6", width=100)
+    box.column("7", width=100)
 
     box.heading("1", text="ID")
     box.heading("2", text="capacity")
@@ -420,6 +421,8 @@ def warehouse():
     box.heading("4", text="street")
     box.heading("5", text="city")
     box.heading("6", text="zipcode")
+    box.heading("7", text="addressID")
+
 
     response = requests.get("http://127.0.0.1:105/warehouse/get_warehouses")
     for i in response.json():
