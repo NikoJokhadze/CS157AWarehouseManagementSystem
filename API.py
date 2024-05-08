@@ -8,7 +8,7 @@ from getpass import getpass
 
 try:  # Surrounding the connection in a try-except block to catch all connection errors
     #password = getpass("Enter your password for MySQL: ")
-    conn = mysql.connector.connect(user="root", password="mati11a",
+    conn = mysql.connector.connect(user="root", password="NikoMySQL_13",
                                    host='127.0.0.1', database="WarehouseSystem")
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:  # If the username or password is wrong, it's caught here
@@ -54,6 +54,7 @@ def check_login():
             return jsonify({"response": False})
     except Exception as e:
         return jsonify({"message": f"Unable to check inputted username and password", "error": str(e), 'response': False}), 500
+
 
 @app.route("/employee/create_user", methods=['POST'])
 def create_user():
@@ -225,6 +226,7 @@ def get_orders():
         cursor.close()
         return jsonify(data), 200
 
+
 @app.route("/orders/get_items_in_orders", methods=['GET'])
 def get_items_in_orders():
     data = request.json
@@ -237,6 +239,7 @@ def get_items_in_orders():
         data = cursor.fetchall()
         cursor.close()
         return jsonify(data), 200
+
 
 @app.route('/orders/delete_order', methods=['DELETE'])
 def delete_order():
@@ -311,16 +314,24 @@ def insert_items_in_warehouse():
 
     try:
         cursor = conn.cursor()
+        cursor.execute("SELECT itemQuantity FROM ItemInWarehouse WHERE warehouseID = %s AND itemID = %s",
+                       (warehouseID, itemID))
+        existing_quantity = cursor.fetchone()
 
-        # The following few lines checks to see if the itemID exists in the Item table
-        cursor.execute("SELECT * FROM Item WHERE itemID = %s", (itemID,))
-        item = cursor.fetchone()
-        if item == "":
-            return jsonify({'message': f'Item with ID {itemID} does not exist in the Item table.'}), 404
+        if existing_quantity:
+            # If the item exists, add the entered number to total ItemQuantity
+            new_quantity = int(existing_quantity[0]) + int(itemQuantity)
+            update_query = "UPDATE ItemInWarehouse SET itemQuantity = %s WHERE warehouseID = %s AND itemID = %s"
+            cursor.execute(update_query, (new_quantity, warehouseID, itemID))
+        else:
+            cursor.execute("SELECT * FROM Item WHERE itemID = %s", (itemID,))
+            item = cursor.fetchone()
+            if item == "":
+                return jsonify({'message': f'Item with ID {itemID} does not exist in the Item table.'}), 404
 
-        insert_query = ("Insert into ItemInWarehouse (warehouseID, itemID, arrivalTime, itemLocation, "
-                        "itemQuantity) values (%s, %s, %s, %s, %s)")
-        cursor.execute(insert_query, (warehouseID, itemID, arrivalTime,  itemLocation, itemQuantity))
+            insert_query = ("Insert into ItemInWarehouse (warehouseID, itemID, arrivalTime, itemLocation, "
+                            "itemQuantity) values (%s, %s, %s, %s, %s)")
+            cursor.execute(insert_query, (warehouseID, itemID, arrivalTime, itemLocation, itemQuantity))
         conn.commit()
         return jsonify({'message': 'Data added successfully'}), 201
     except Exception as e:
@@ -345,14 +356,6 @@ def get_items_by_warehouse():
     if len(data) == 0:
         return jsonify({'message': "There are no items in this warehouse."})
     else:
-        # The following command will get all ordered items and display the total amount of those items that are
-        # on order status across all orders
-        cursor.execute("SELECT i.itemName, w.warehouseID, SUM(o.itemQuantity) as totalCountOrdered "
-                       "FROM Item i INNER JOIN ItemsOrdered o ON i.itemID = o.itemID "
-                       "INNER JOIN ItemInWarehouse w ON w.itemID = o.itemID "
-                       "WHERE warehouseID = %s "
-                       "GROUP BY itemName", (warehouseID,))
-        data += cursor.fetchall()
         cursor.close()
         return jsonify(data), 200
 
@@ -373,14 +376,6 @@ def get_items_by_name():
     if len(data) == 0:
         return jsonify({'message': "There are no items by this name."})
     else:
-        # The following command will get all ordered items and display the total amount of those items that are
-        # on order status across all orders
-        cursor.execute("SELECT i.itemName, SUM(o.itemQuantity) AS totalCountOrdered "
-                       "FROM Item i INNER JOIN ItemsOrdered o "
-                       "ON i.itemID = o.itemID "
-                       "WHERE itemName = %s "
-                       "GROUP BY itemName", (itemName,))
-        data += cursor.fetchall()
         cursor.close()
         return jsonify(data), 200
 
@@ -458,9 +453,6 @@ def delete_item_from_order():
         return jsonify({'message': 'Failed to delete data', 'error': str(e)}), 500
     finally:
         cursor.close()
-
-
-
 
 
 if __name__ == '__main__':
