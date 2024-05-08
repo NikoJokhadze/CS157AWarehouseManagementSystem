@@ -1,13 +1,13 @@
 Use WarehouseSystem;
 
-insert into Addresses (addressNum, street, city, zipCode, warehouse) values
-    (1155, "S Yankton Avenue", "San Jose", 95121, true),
-    (90822, "East Street", "Washington D.C.", 20005, false),
-    (55, "Green Hill Road", "Los Angeles", 90048, true),
-    (33, "Spooner Street", "Chicago", 60602, false),
-    (601, "N Alpine Drive", "Austin", 78653, false),
-    (7, "12th Avenue", "Oakland", 94605, false),
-    (542, "Johnson Drive", "New York", 10010, true);
+insert into Addresses (addressNum, street, city, zipCode) values
+    (1155, "S Yankton Avenue", "San Jose", 95121),
+    (90822, "East Street", "Washington D.C.", 20005),
+    (55, "Green Hill Road", "Los Angeles", 90048),
+    (33, "Spooner Street", "Chicago", 60602),
+    (601, "N Alpine Drive", "Austin", 78653),
+    (7, "12th Avenue", "Oakland", 94605),
+    (542, "Johnson Drive", "New York", 10010);
 
 insert into Warehouse (warehouseID, warehouseAddressID, capacity) values
     (12345, 1, 40000),

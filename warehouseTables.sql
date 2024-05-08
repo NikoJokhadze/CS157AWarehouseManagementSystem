@@ -8,7 +8,6 @@ create table if not exists Addresses (
     street varchar(99) not null,
     city varchar(99) not null,
     zipCode int not null,
-    warehouse bool not null, -- Determines whether this address is a warehouse address or delivery address
     primary key (addressID)
 );
 
