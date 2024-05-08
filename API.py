@@ -7,7 +7,7 @@ from getpass import getpass
 
 
 try:  # Surrounding the connection in a try-except block to catch all connection errors
-    #password = getpass("Enter your password for MySQL: ")
+    # password = getpass("Enter your password for MySQL: ")
     conn = mysql.connector.connect(user="root", password="NikoMySQL_13",
                                    host='127.0.0.1', database="WarehouseSystem")
 except mysql.connector.Error as err:
