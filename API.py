@@ -312,6 +312,11 @@ def update_warehouse():
 
     try:
         cursor = conn.cursor()
+        cursor.execute("SELECT * FROM Addresses WHERE addressID = %s", (warehouseAddressID,))
+        address_exists = cursor.fetchone()
+        if not address_exists:
+            return jsonify({'message': 'Warehouse address with the provided ID does not exist.'}), 404
+
         # Update data in warehouse
         update_query = "UPDATE Warehouse SET capacity = %s WHERE warehouseID = %s"
         cursor.execute(update_query, (capacity, warehouseID))
