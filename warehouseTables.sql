@@ -3,7 +3,7 @@ use WarehouseSystem;
 
 -- This table details information about delivery addresses
 create table if not exists Addresses (
-    addressID int not null, -- Each address will be associated with a unique ID
+    addressID int not null AUTO_INCREMENT, -- Each address will be associated with a unique ID
     addressNum int not null,
     street varchar(99) not null,
     city varchar(99) not null,
