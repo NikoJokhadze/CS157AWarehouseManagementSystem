@@ -16,9 +16,9 @@ ordersFrame = Frame(root)
 warehousesFrame = Frame(root)
 itemsFrame = Frame(root)
 employeesFrame = Frame(root)
-update_emp = Frame(root)
-create_emp = Frame(root)
-update_ware = Frame(root)
+updateEmpFrame = Frame(root)
+createEmpFrame = Frame(root)
+updateWareFrame = Frame(root)
 orderItemsFrame = Frame(root)
 createItemsFrame = Frame(root)
 addItemsFrame = Frame(root)
@@ -486,7 +486,7 @@ def warehouse():
     user_enter.grid(row=3, column=0, pady=(0, 25))
 
     update_ware_button = ttk.Button(warehousesFrame, text="Update Warehouse",
-                               command=lambda: [update_ware.grid(),
+                               command=lambda: [updateWareFrame.grid(),
                                                 warehousesFrame.grid_forget(),
                                                 update_warehouse(user_enter.get()),
                                                 clear_frame(warehousesFrame)],
@@ -513,52 +513,52 @@ def update_warehouse(temp):
         response = json.loads(response.text)
         label_response.config(text=response["message"])
 
-    label = Label(update_ware, text=f"Warehouse ({temp})", font=title)
+    label = Label(updateWareFrame, text=f"Warehouse ({temp})", font=title)
     label.grid(row=0, column=0, pady=(0, 25))
 
-    label = Label(update_ware, text="Warehouse Address ID", font=text)
+    label = Label(updateWareFrame, text="Warehouse Address ID", font=text)
     label.grid(row=3, column=0, pady=(0, 0))
-    add_id_enter = Entry(update_ware, font=entry)
+    add_id_enter = Entry(updateWareFrame, font=entry)
     add_id_enter.grid(row=4, column=0, pady=(0, 25))
 
-    label = Label(update_ware, text="Capacity", font=text)
+    label = Label(updateWareFrame, text="Capacity", font=text)
     label.grid(row=5, column=0, pady=(0, 0))
-    capacity_enter = Entry(update_ware, font=entry)
+    capacity_enter = Entry(updateWareFrame, font=entry)
     capacity_enter.grid(row=6, column=0, pady=(0, 25))
 
-    label = Label(update_ware, text="Address Number", font=text)
+    label = Label(updateWareFrame, text="Address Number", font=text)
     label.grid(row=7, column=0, pady=(0, 0))
-    add_num_enter = Entry(update_ware, font=entry)
+    add_num_enter = Entry(updateWareFrame, font=entry)
     add_num_enter.grid(row=8, column=0, pady=(0, 25))
 
-    label = Label(update_ware, text="Street", font=text)
+    label = Label(updateWareFrame, text="Street", font=text)
     label.grid(row=9, column=0, pady=(0, 0))
-    street_enter = Entry(update_ware, font=entry)
+    street_enter = Entry(updateWareFrame, font=entry)
     street_enter.grid(row=10, column=0, pady=(0, 25))
 
-    label = Label(update_ware, text="City", font=text)
+    label = Label(updateWareFrame, text="City", font=text)
     label.grid(row=11, column=0, pady=(0, 0))
-    city_enter = Entry(update_ware, font=entry)
+    city_enter = Entry(updateWareFrame, font=entry)
     city_enter.grid(row=12, column=0, pady=(0, 25))
 
-    label = Label(update_ware, text="Zip Code", font=text)
+    label = Label(updateWareFrame, text="Zip Code", font=text)
     label.grid(row=13, column=0, pady=(0, 0))
-    zip_enter = Entry(update_ware, font=entry)
+    zip_enter = Entry(updateWareFrame, font=entry)
     zip_enter.grid(row=14, column=0, pady=(0, 25))
 
-    ware_update = ttk.Button(update_ware, text="Update Warehouse",
+    ware_update = ttk.Button(updateWareFrame, text="Update Warehouse",
                              command=lambda: [up_ware()],
                              style='my.TButton')
     ware_update.grid(row=15, column=0, pady=(0, 0))
 
-    label_response = Label(update_ware, text="", font=text)
+    label_response = Label(updateWareFrame, text="", font=text)
     label_response.grid(row=16, column=0, pady=(10, 10))
 
-    back_button = ttk.Button(update_ware, text="Back",
+    back_button = ttk.Button(updateWareFrame, text="Back",
                          command=lambda: [warehousesFrame.grid(),
-                                          update_ware.grid_forget(),
+                                          updateWareFrame.grid_forget(),
                                           warehouse(),
-                                          clear_frame(update_ware)],
+                                          clear_frame(updateWareFrame)],
                          style='my.TButton')
     back_button.grid(row=17, column=0, pady=(0, 0))
 
@@ -780,7 +780,7 @@ def employee():
     user_enter.grid(row=3, column=0, pady=(0, 25))
 
     update_emp_button = ttk.Button(employeesFrame, text="Update Employee",
-                               command=lambda: [update_emp.grid(),
+                               command=lambda: [updateEmpFrame.grid(),
                                                 employeesFrame.grid_forget(),
                                                 update_employee(user_enter.get()),
                                                 clear_frame(employeesFrame)],
@@ -793,7 +793,7 @@ def employee():
     del_button.grid(row=5, column=0, pady=(25, 0))
 
     cre_button = ttk.Button(employeesFrame, text="Create Employee",
-                        command=lambda: [create_emp.grid(),
+                        command=lambda: [createEmpFrame.grid(),
                                          employeesFrame.grid_forget(),
                                          create_employee(),
                                          clear_frame(employeesFrame)],
@@ -820,52 +820,52 @@ def create_employee():
         response = json.loads(response.text)
         label_response.config(text=response["message"])
 
-    label = Label(create_emp, text=f"", font=title)
+    label = Label(createEmpFrame, text=f"", font=title)
     label.grid(row=0, column=0, pady=(0, 0))
 
-    label = Label(create_emp, text="First Name", font=text)
+    label = Label(createEmpFrame, text="First Name", font=text)
     label.grid(row=1, column=0, pady=(0, 0))
-    first_enter = Entry(create_emp, font=entry)
+    first_enter = Entry(createEmpFrame, font=entry)
     first_enter.grid(row=2, column=0, pady=(0, 25))
 
-    label = Label(create_emp, text="Middle Name", font=text)
+    label = Label(createEmpFrame, text="Middle Name", font=text)
     label.grid(row=3, column=0, pady=(0, 0))
-    mid_enter = Entry(create_emp, font=entry)
+    mid_enter = Entry(createEmpFrame, font=entry)
     mid_enter.grid(row=4, column=0, pady=(0, 25))
 
-    label = Label(create_emp, text="Last Name", font=text)
+    label = Label(createEmpFrame, text="Last Name", font=text)
     label.grid(row=5, column=0, pady=(0, 0))
-    last_enter = Entry(create_emp, font=entry)
+    last_enter = Entry(createEmpFrame, font=entry)
     last_enter.grid(row=6, column=0, pady=(0, 25))
 
-    label = Label(create_emp, text="Job Title", font=text)
+    label = Label(createEmpFrame, text="Job Title", font=text)
     label.grid(row=7, column=0, pady=(0, 0))
-    job_enter = Entry(create_emp, font=entry)
+    job_enter = Entry(createEmpFrame, font=entry)
     job_enter.grid(row=8, column=0, pady=(0, 25))
 
-    label = Label(create_emp, text="Username", font=text)
+    label = Label(createEmpFrame, text="Username", font=text)
     label.grid(row=9, column=0, pady=(0, 0))
-    user_enter = Entry(create_emp, font=entry)
+    user_enter = Entry(createEmpFrame, font=entry)
     user_enter.grid(row=10, column=0, pady=(0, 25))
 
-    label = Label(create_emp, text="Password", font=text)
+    label = Label(createEmpFrame, text="Password", font=text)
     label.grid(row=11, column=0, pady=(0, 0))
-    pass_enter = Entry(create_emp, font=entry)
+    pass_enter = Entry(createEmpFrame, font=entry)
     pass_enter.grid(row=12, column=0, pady=(0, 0))
 
-    label_response = Label(create_emp, font=text)
+    label_response = Label(createEmpFrame, font=text)
     label_response.grid(row=13, column=0, pady=(20, 20))
 
-    create_button = ttk.Button(create_emp, text="Create",
+    create_button = ttk.Button(createEmpFrame, text="Create",
                            command=lambda: [create_user()],
                            style='my.TButton')
     create_button.grid(row=14, column=0, pady=(0, 25))
 
-    back_button = ttk.Button(create_emp, text="Back",
+    back_button = ttk.Button(createEmpFrame, text="Back",
                          command=lambda: [employeesFrame.grid(),
-                                          create_emp.grid_forget(),
+                                          createEmpFrame.grid_forget(),
                                           employee(),
-                                          clear_frame(create_emp)],
+                                          clear_frame(createEmpFrame)],
                          style='my.TButton')
     back_button.grid(row=15, column=0, pady=(0, 0))
 
@@ -876,6 +876,9 @@ def update_employee(temp):
                                 json={"new_username": user_enter.get()})
         response = json.loads(response.text)
         label_response.config(text=response["message"])
+        x = user_enter.get()
+        clear_frame(updateEmpFrame)
+        update_employee(x)
 
     def up_title():
         response = requests.put(f"http://127.0.0.1:105/employee/update_title/{temp}",
@@ -890,56 +893,56 @@ def update_employee(temp):
         response = json.loads(response.text)
         label_response.config(text=response["message"])
 
-    label = Label(update_emp, text=f"{temp}", font=title)
+    label = Label(updateEmpFrame, text=f"{temp}", font=title)
     label.grid(row=0, column=0, pady=(0, 25))
 
-    label = Label(update_emp, text="Username", font=text)
+    label = Label(updateEmpFrame, text="Username", font=text)
     label.grid(row=1, column=0, pady=(0, 0))
 
-    user_enter = Entry(update_emp, font=entry)
+    user_enter = Entry(updateEmpFrame, font=entry)
     user_enter.grid(row=2, column=0, pady=(0, 0))
 
-    user_update = ttk.Button(update_emp, text="Update Username",
+    user_update = ttk.Button(updateEmpFrame, text="Update Username",
                          command=lambda: [up_user()],
                          style='my.TButton')
     user_update.grid(row=3, column=0, pady=(10, 50))
 
-    label = Label(update_emp, text="Job", font=text)
+    label = Label(updateEmpFrame, text="Job", font=text)
     label.grid(row=4, column=0, pady=(0, 0))
 
-    job_enter = Entry(update_emp, font=entry)
+    job_enter = Entry(updateEmpFrame, font=entry)
     job_enter.grid(row=5, column=0, pady=(0, 0))
 
-    job_update = ttk.Button(update_emp, text="Update Job",
+    job_update = ttk.Button(updateEmpFrame, text="Update Job",
                         command=lambda: [up_title()],
                         style='my.TButton')
     job_update.grid(row=6, column=0, pady=(10, 50))
 
-    label = Label(update_emp, text="Old Password", font=text)
+    label = Label(updateEmpFrame, text="Old Password", font=text)
     label.grid(row=7, column=0, pady=(0, 0))
 
-    password_old = Entry(update_emp, font=entry)
+    password_old = Entry(updateEmpFrame, font=entry)
     password_old.grid(row=8, column=0, pady=(0, 0))
 
-    label = Label(update_emp, text="New Password", font=text)
+    label = Label(updateEmpFrame, text="New Password", font=text)
     label.grid(row=9, column=0, pady=(0, 0))
 
-    password_new = Entry(update_emp, font=entry)
+    password_new = Entry(updateEmpFrame, font=entry)
     password_new.grid(row=10, column=0, pady=(0, 0))
 
-    password_update = ttk.Button(update_emp, text="Update Password",
+    password_update = ttk.Button(updateEmpFrame, text="Update Password",
                              command=lambda: [up_pass()],
                              style='my.TButton')
     password_update.grid(row=11, column=0, pady=(10, 25))
 
-    label_response = Label(update_emp, text="", font=text)
+    label_response = Label(updateEmpFrame, text="", font=text)
     label_response.grid(row=12, column=0, pady=(0, 0))
 
-    back_button = ttk.Button(update_emp, text="Back",
+    back_button = ttk.Button(updateEmpFrame, text="Back",
                          command=lambda: [employeesFrame.grid(),
-                                          update_emp.grid_forget(),
+                                          updateEmpFrame.grid_forget(),
                                           employee(),
-                                          clear_frame(update_emp)],
+                                          clear_frame(updateEmpFrame)],
                          style='my.TButton')
     back_button.grid(row=13, column=0, pady=(0, 0))
 
