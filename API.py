@@ -8,7 +8,7 @@ from getpass import getpass
 
 try:  # Surrounding the connection in a try-except block to catch all connection errors
     # password = getpass("Enter your password for MySQL: ")
-    conn = mysql.connector.connect(user="root", password="mati11a",
+    conn = mysql.connector.connect(user="root", password="NikoMySQL_13",
                                    host='127.0.0.1', database="WarehouseSystem")
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:  # If the username or password is wrong, it's caught here
@@ -226,7 +226,7 @@ def insert_item():
     itemPrice = data.get("itemPrice")
 
     if itemName == "" or itemWeight == "" or itemPrice == "":
-        return jsonify({'message': 'To insert a new item, you must provide the itemID, itemWeight, and itemPrice'}), 400
+        return jsonify({'message': 'Missing fields'}), 400
 
     try:
         cursor = conn.cursor()
@@ -254,6 +254,7 @@ def get_warehouses():
         return jsonify({'message': "There are no warehouses in the system."})
     else:
         return jsonify(data), 200
+
 
 @app.route('/warehouse/add_items', methods=['POST'])
 def insert_items_in_warehouse():
@@ -488,6 +489,64 @@ def delete_item_from_order():
 
         delete_query = "DELETE from ItemsOrdered Where itemID = %s"
         cursor.execute(delete_query, (itemID,))
+        conn.commit()
+        return jsonify({'message': 'Data deleted successfully'}), 200
+    except Exception as e:
+        return jsonify({'message': 'Failed to delete data', 'error': str(e)}), 500
+    finally:
+        cursor.close()
+
+
+@app.route("/addresses/get_addresses", methods=['GET'])
+def get_addresses():
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Addresses")
+    data = cursor.fetchall()
+    if len(data) == 0:
+        return jsonify({'message': "There are no addresses in the system."})
+    else:
+        cursor.close()
+        return jsonify(data), 200
+
+
+@app.route("/addresses/create_address", methods=['POST'])
+def create_address():
+    data = request.json
+    addressNum = data.get("addressNum")
+    street = data.get("street")
+    city = data.get("city")
+    zipCode = data.get("zipCode")
+    warehouse = data.get("warehouse")
+
+    if addressNum == "" or street == "" or city == "" or zipCode == "" or warehouse == "":
+        return jsonify({'message': 'Missing fields'}), 400
+
+    try:
+        cursor = conn.cursor()
+
+        insert_query = ("Insert into Addresses (addressNum, street, city, zipCode, warehouse) "
+                        "values (%s, %s, %s, %s, %s)")
+        cursor.execute(insert_query, (addressNum, street, city, zipCode, warehouse))
+        conn.commit()
+        return jsonify({'message': 'Data added successfully'}), 201
+    except Exception as e:
+        return jsonify({'message': 'Failed to add data', 'error': str(e)}), 500
+    finally:
+        cursor.close()
+
+
+@app.route('/addresses/delete_address', methods=['DELETE'])
+def delete_address():
+    data = request.json
+    addressID = data.get("addressID")
+
+    if addressID == "":
+        return jsonify({'message': 'addressID is a required field'}), 400
+
+    try:
+        cursor = conn.cursor()
+        delete_query = "DELETE from Addresses Where addressID = %s"
+        cursor.execute(delete_query, (addressID,))
         conn.commit()
         return jsonify({'message': 'Data deleted successfully'}), 200
     except Exception as e:
