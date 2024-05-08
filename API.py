@@ -164,6 +164,82 @@ def delete_user(username):
         cursor.close()
 
 
+@app.route("/item/get_items", methods=['GET'])
+def get_items():
+    cursor = conn.cursor()
+    cursor.execute("""SELECT i.itemID, i.itemName, i.itemWeight, i.itemPrice, w.itemQuantity, w.warehouseID, w.itemLocation
+                   FROM Item i LEFT JOIN ItemInWarehouse w ON i.itemID = w.itemID""")
+    data = cursor.fetchall()
+    if len(data) == 0:
+        return jsonify({'message': "There are no items in the system."})
+    else:
+        cursor.close()
+        return jsonify(data), 200
+
+
+@app.route("/item/get_items_by_warehouse", methods=['GET'])
+def get_items_by_warehouse():
+    data = request.json
+    warehouseID = data.get("warehouseID")
+
+    if warehouseID == "":
+        return jsonify({'message': 'Must enter warehouse ID to search by warehouse.'}), 400
+
+    cursor = conn.cursor()
+    cursor.execute("SELECT w.warehouseID, i.itemID, i.itemName, i.itemWeight, i.itemPrice, w.itemQuantity "
+                   "FROM Item i INNER JOIN ItemInWarehouse w ON i.itemID = w.itemID "
+                   "WHERE warehouseID = %s", (warehouseID,))
+    data = cursor.fetchall()
+    if len(data) == 0:
+        return jsonify({'message': "There are no items in this warehouse."})
+    else:
+        cursor.close()
+        return jsonify(data), 200
+
+
+@app.route("/item/get_items_by_name", methods=['GET'])
+def get_items_by_name():
+    data = request.json
+    itemName = data.get("itemName")
+
+    if itemName == "":
+        return jsonify({'message': 'Must enter item name to search by item.'}), 400
+
+    cursor = conn.cursor()
+    cursor.execute("SELECT i.itemID, i.itemName, i.itemWeight, i.itemPrice, w.itemQuantity, w.warehouseID "
+                   "FROM Item i INNER JOIN ItemInWarehouse w ON i.itemID = w.itemID "
+                   "WHERE itemName = %s", (itemName,))
+    data = cursor.fetchall()
+    if len(data) == 0:
+        return jsonify({'message': "There are no items by this name."})
+    else:
+        cursor.close()
+        return jsonify(data), 200
+
+
+@app.route('/item/create_item', methods=['POST'])
+def insert_item():
+    data = request.json
+    itemName = data.get("itemName")
+    itemWeight = data.get("itemWeight")
+    itemPrice = data.get("itemPrice")
+
+    if itemName == "" or itemWeight == "" or itemPrice == "":
+        return jsonify({'message': 'To insert a new item, you must provide the itemID, itemWeight, and itemPrice'}), 400
+
+    try:
+        cursor = conn.cursor()
+
+        insert_query = "Insert into Item (itemName, itemWeight, itemPrice) values (%s, %s, %s)"
+        cursor.execute(insert_query, (itemName, itemWeight, itemPrice))
+        conn.commit()
+        return jsonify({'message': 'Data added successfully'}), 201
+    except Exception as e:
+        return jsonify({'message': 'Failed to add data', 'error': str(e)}), 500
+    finally:
+        cursor.close()
+
+
 @app.route("/warehouse/get_warehouses", methods=['GET'])
 def get_warehouses():
     cursor = conn.cursor()
@@ -177,6 +253,45 @@ def get_warehouses():
         return jsonify({'message': "There are no warehouses in the system."})
     else:
         return jsonify(data), 200
+
+@app.route('/warehouse/add_items', methods=['POST'])
+def insert_items_in_warehouse():
+    data = request.json
+    warehouseID = data.get("warehouseID")
+    itemID = data.get("itemID")
+    arrivalTime = date.today()
+    itemLocation = data.get("itemLocation")
+    itemQuantity = data.get("itemQuantity")
+
+    if warehouseID == "" or itemID == "" or arrivalTime == "" or itemLocation == "" or itemQuantity == "":
+        return jsonify({'message': 'One of the required fields is missing'}), 400
+
+    try:
+        cursor = conn.cursor()
+        cursor.execute("SELECT itemQuantity FROM ItemInWarehouse WHERE warehouseID = %s AND itemID = %s",
+                       (warehouseID, itemID))
+        existing_quantity = cursor.fetchone()
+
+        if existing_quantity:
+            # If the item exists, add the entered number to total ItemQuantity
+            new_quantity = int(existing_quantity[0]) + int(itemQuantity)
+            update_query = "UPDATE ItemInWarehouse SET itemQuantity = %s WHERE warehouseID = %s AND itemID = %s"
+            cursor.execute(update_query, (new_quantity, warehouseID, itemID))
+        else:
+            cursor.execute("SELECT * FROM Item WHERE itemID = %s", (itemID,))
+            item = cursor.fetchone()
+            if item == "":
+                return jsonify({'message': f'Item with ID {itemID} does not exist in the Item table.'}), 404
+
+            insert_query = ("Insert into ItemInWarehouse (warehouseID, itemID, arrivalTime, itemLocation, "
+                            "itemQuantity) values (%s, %s, %s, %s, %s)")
+            cursor.execute(insert_query, (warehouseID, itemID, arrivalTime, itemLocation, itemQuantity))
+        conn.commit()
+        return jsonify({'message': 'Data added successfully'}), 201
+    except Exception as e:
+        return jsonify({'message': 'Failed to add data', 'error': str(e)}), 500
+    finally:
+        cursor.close()
 
 
 @app.route('/warehouse/update_warehouse', methods=['PUT'])
@@ -241,145 +356,6 @@ def get_items_in_orders():
         return jsonify(data), 200
 
 
-@app.route('/orders/delete_order', methods=['DELETE'])
-def delete_order():
-    data = request.json
-    orderID = data.get("orderID")
-
-    if orderID == "":
-        return jsonify({'message': 'orderID is a required field'}), 400
-
-    try:
-        cursor = conn.cursor()
-        delete_query = "DELETE from ItemsOrdered Where orderID = %s"
-        cursor.execute(delete_query, (orderID,))
-
-        delete_query = "Delete from Orders Where orderID = %s"
-        cursor.execute(delete_query, (orderID,))
-        conn.commit()
-        return jsonify({'message': 'Data deleted successfully'}), 200
-    except Exception as e:
-        return jsonify({'message': 'Failed to delete data', 'error': str(e)}), 500
-    finally:
-        cursor.close()
-
-
-@app.route("/item/get_items", methods=['GET'])
-def get_items():
-    cursor = conn.cursor()
-    cursor.execute("""SELECT i.itemID, i.itemName, i.itemWeight, i.itemPrice, w.itemQuantity, w.warehouseID, w.itemLocation
-                   FROM Item i LEFT JOIN ItemInWarehouse w ON i.itemID = w.itemID""")
-    data = cursor.fetchall()
-    if len(data) == 0:
-        return jsonify({'message': "There are no items in the system."})
-    else:
-        cursor.close()
-        return jsonify(data), 200
-
-
-@app.route('/item/create_item', methods=['POST'])
-def insert_item():
-    data = request.json
-    itemName = data.get("itemName")
-    itemWeight = data.get("itemWeight")
-    itemPrice = data.get("itemPrice")
-
-    if itemName == "" or itemWeight == "" or itemPrice == "":
-        return jsonify({'message': 'To insert a new item, you must provide the itemID, itemWeight, and itemPrice'}), 400
-
-    try:
-        cursor = conn.cursor()
-
-        insert_query = "Insert into Item (itemName, itemWeight, itemPrice) values (%s, %s, %s)"
-        cursor.execute(insert_query, (itemName, itemWeight, itemPrice))
-        conn.commit()
-        return jsonify({'message': 'Data added successfully'}), 201
-    except Exception as e:
-        return jsonify({'message': 'Failed to add data', 'error': str(e)}), 500
-    finally:
-        cursor.close()
-
-
-@app.route('/warehouse/add_items', methods=['POST'])
-def insert_items_in_warehouse():
-    data = request.json
-    warehouseID = data.get("warehouseID")
-    itemID = data.get("itemID")
-    arrivalTime = date.today()
-    itemLocation = data.get("itemLocation")
-    itemQuantity = data.get("itemQuantity")
-
-    if warehouseID == "" or itemID == "" or arrivalTime == "" or itemLocation == "" or itemQuantity == "":
-        return jsonify({'message': 'One of the required fields is missing'}), 400
-
-    try:
-        cursor = conn.cursor()
-        cursor.execute("SELECT itemQuantity FROM ItemInWarehouse WHERE warehouseID = %s AND itemID = %s",
-                       (warehouseID, itemID))
-        existing_quantity = cursor.fetchone()
-
-        if existing_quantity:
-            # If the item exists, add the entered number to total ItemQuantity
-            new_quantity = int(existing_quantity[0]) + int(itemQuantity)
-            update_query = "UPDATE ItemInWarehouse SET itemQuantity = %s WHERE warehouseID = %s AND itemID = %s"
-            cursor.execute(update_query, (new_quantity, warehouseID, itemID))
-        else:
-            cursor.execute("SELECT * FROM Item WHERE itemID = %s", (itemID,))
-            item = cursor.fetchone()
-            if item == "":
-                return jsonify({'message': f'Item with ID {itemID} does not exist in the Item table.'}), 404
-
-            insert_query = ("Insert into ItemInWarehouse (warehouseID, itemID, arrivalTime, itemLocation, "
-                            "itemQuantity) values (%s, %s, %s, %s, %s)")
-            cursor.execute(insert_query, (warehouseID, itemID, arrivalTime, itemLocation, itemQuantity))
-        conn.commit()
-        return jsonify({'message': 'Data added successfully'}), 201
-    except Exception as e:
-        return jsonify({'message': 'Failed to add data', 'error': str(e)}), 500
-    finally:
-        cursor.close()
-
-
-@app.route("/item/get_items_by_warehouse", methods=['GET'])
-def get_items_by_warehouse():
-    data = request.json
-    warehouseID = data.get("warehouseID")
-
-    if warehouseID == "":
-        return jsonify({'message': 'Must enter warehouse ID to search by warehouse.'}), 400
-
-    cursor = conn.cursor()
-    cursor.execute("SELECT w.warehouseID, i.itemID, i.itemName, i.itemWeight, i.itemPrice, w.itemQuantity "
-                   "FROM Item i INNER JOIN ItemInWarehouse w ON i.itemID = w.itemID "
-                   "WHERE warehouseID = %s", (warehouseID,))
-    data = cursor.fetchall()
-    if len(data) == 0:
-        return jsonify({'message': "There are no items in this warehouse."})
-    else:
-        cursor.close()
-        return jsonify(data), 200
-
-
-@app.route("/item/get_items_by_name", methods=['GET'])
-def get_items_by_name():
-    data = request.json
-    itemName = data.get("itemName")
-
-    if itemName == "":
-        return jsonify({'message': 'Must enter item name to search by item.'}), 400
-
-    cursor = conn.cursor()
-    cursor.execute("SELECT i.itemID, i.itemName, i.itemWeight, i.itemPrice, w.itemQuantity, w.warehouseID "
-                   "FROM Item i INNER JOIN ItemInWarehouse w ON i.itemID = w.itemID "
-                   "WHERE itemName = %s", (itemName,))
-    data = cursor.fetchall()
-    if len(data) == 0:
-        return jsonify({'message': "There are no items by this name."})
-    else:
-        cursor.close()
-        return jsonify(data), 200
-
-
 @app.route("/orders/create_order", methods=['POST'])
 def create_order():
     data = request.json
@@ -407,14 +383,33 @@ def add_item_to_order():
     data = request.json
     orderID = data.get("orderID")
     itemID = data.get("itemID")
+    warehouseID = data.get("warehouseID")
     itemQuantity = data.get("itemQuantity")
 
-    if orderID == "" or itemID == "" or itemQuantity == "":
+    if orderID == "" or itemID == "" or warehouseID == "" or itemQuantity == "":
         return jsonify({'message': 'Missing a field.'}), 400
 
     try:
         cursor = conn.cursor()
-        cursor.execute("SELECT itemQuantity FROM ItemsOrdered WHERE orderID = %s AND itemID = %s", (orderID, itemID))
+
+        # Check if the entered itemQuantity does not exceed the available quantity in the warehouse
+        cursor.execute("SELECT itemQuantity FROM ItemInWarehouse WHERE warehouseID = %s AND itemID = %s",
+                       (warehouseID, itemID))
+        warehouse_quantity = cursor.fetchone()
+        if warehouse_quantity is None:
+            return jsonify({'message': 'Item not found in the warehouse.'}), 404
+
+        warehouse_quantity = int(warehouse_quantity[0])
+        if int(itemQuantity) > warehouse_quantity:
+            return jsonify({'message': 'Entered item quantity exceeds available quantity in the warehouse.'}), 400
+
+        # Update the quantity in the warehouse by subtracting the entered itemQuantity
+        new_warehouse_quantity = warehouse_quantity - int(itemQuantity)
+        update_query = "UPDATE ItemInWarehouse SET itemQuantity = %s WHERE warehouseID = %s AND itemID = %s"
+        cursor.execute(update_query, (new_warehouse_quantity, warehouseID, itemID))
+
+        cursor.execute("SELECT itemQuantity FROM ItemsOrdered WHERE orderID = %s AND itemID = %s",
+                       (orderID, itemID))
         existing_quantity = cursor.fetchone()
 
         if existing_quantity:
@@ -430,6 +425,29 @@ def add_item_to_order():
         return jsonify({'message': 'Data added successfully'}), 201
     except Exception as e:
         return jsonify({'message': 'Failed to add data', 'error': str(e)}), 500
+    finally:
+        cursor.close()
+
+
+@app.route('/orders/delete_order', methods=['DELETE'])
+def delete_order():
+    data = request.json
+    orderID = data.get("orderID")
+
+    if orderID == "":
+        return jsonify({'message': 'orderID is a required field'}), 400
+
+    try:
+        cursor = conn.cursor()
+        delete_query = "DELETE from ItemsOrdered Where orderID = %s"
+        cursor.execute(delete_query, (orderID,))
+
+        delete_query = "Delete from Orders Where orderID = %s"
+        cursor.execute(delete_query, (orderID,))
+        conn.commit()
+        return jsonify({'message': 'Data deleted successfully'}), 200
+    except Exception as e:
+        return jsonify({'message': 'Failed to delete data', 'error': str(e)}), 500
     finally:
         cursor.close()
 
