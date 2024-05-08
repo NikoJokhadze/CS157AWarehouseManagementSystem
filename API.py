@@ -456,13 +456,30 @@ def delete_order():
 def delete_item_from_order():
     data = request.json
     orderID = data.get("orderID")
+    warehouseID = data.get("warehouseID")
     itemID = data.get("itemID")
 
-    if orderID == "" or itemID == "":
-        return jsonify({'message': 'Missing fields.'}), 400
+    if orderID == "" or itemID == "" or warehouseID == "":
+        return jsonify({'message': 'Missing a field.'}), 400
 
     try:
         cursor = conn.cursor()
+
+        cursor.execute("SELECT itemQuantity FROM ItemInWarehouse WHERE warehouseID = %s AND itemID = %s",
+                       (warehouseID, itemID))
+        existing_quantity = cursor.fetchone()
+        if existing_quantity is None:
+            return jsonify({'message': 'Item not found in the specified warehouse.'}), 404
+
+        # Retrieve the quantity of the deleted item from the order
+        cursor.execute("SELECT itemQuantity FROM ItemsOrdered WHERE orderID = %s AND itemID = %s", (orderID, itemID))
+        deleted_item_quantity = cursor.fetchone()
+
+        if deleted_item_quantity:
+            deleted_item_quantity = int(deleted_item_quantity[0])
+            update_query = "UPDATE ItemInWarehouse SET itemQuantity = itemQuantity + %s WHERE warehouseID = %s AND itemID = %s"
+            cursor.execute(update_query, (deleted_item_quantity, warehouseID, itemID))
+
         delete_query = "DELETE from ItemsOrdered Where itemID = %s"
         cursor.execute(delete_query, (itemID,))
         conn.commit()
