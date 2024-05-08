@@ -4,10 +4,10 @@ from tkinter import *
 from tkinter import scrolledtext, ttk
 import requests
 
-from time import sleep
+import sv_ttk
 
 root = Tk()
-root.geometry("900x700")
+root.geometry("900x750")
 root.resizable(False, False)
 
 loginFrame = Frame(root)
@@ -24,8 +24,12 @@ createItemsFrame = Frame(root)
 addItemsFrame = Frame(root)
 createOrderFrame = Frame(root)
 
+sv_ttk.set_theme("dark")
 title = ("Arial", 25)
 text = ("Arial", 12)
+entry = ("Arial", 15)
+s = ttk.Style()
+s.configure('my.TButton', font=('Arial', 25))
 
 root.grid_columnconfigure(0, weight=1)
 
@@ -51,59 +55,58 @@ def login():
             login_button.configure(text="Wrong", bg="red")
             login_button.after(1000, lambda: login_button.configure(text="Enter", bg="#F0F0F0"))
 
-    label = Label(loginFrame, text="Login", font=title)
+    label = ttk.Label(loginFrame, text="Login", font=title)
     label.grid(row=0, column=0, pady=(0, 150))
 
-    login_label = Label(loginFrame, text="Username", font=text)
+    login_label = ttk.Label(loginFrame, text="Username", font=text)
     login_label.grid(row=1, column=0)
 
-    user_enter = Entry(loginFrame, font=("Arial", 30))
+    user_enter = ttk.Entry(loginFrame, font=("Arial", 30))
     user_enter.grid(row=2, column=0, pady=(0, 100))
 
-    pass_label = Label(loginFrame, text="Password", font=text)
+    pass_label = ttk.Label(loginFrame, text="Password", font=text)
     pass_label.grid(row=3, column=0)
 
-    pass_enter = Entry(loginFrame, show="*", font=("Arial", 30))
+    pass_enter = ttk.Entry(loginFrame, show="*", font=("Arial", 30))
     pass_enter.grid(row=4, column=0)
 
-    login_button = Button(loginFrame, text="Enter", command=test_login, font=title)
+    login_button = ttk.Button(loginFrame, text="Enter", command=test_login,
+                             style='my.TButton')
     login_button.grid(row=5, column=0, pady=(150, 0))
-
-
 def main():
-    items_button = Button(mainFrame, text="Items",
+    items_button = ttk.Button(mainFrame, text="Items",
                           command=lambda: [itemsFrame.grid(),
                                            mainFrame.grid_forget(),
                                            item()],
-                          font=("Arial", 20))
+                          style='my.TButton')
     items_button.grid(row=0, column=0, pady=(50, 0))
 
-    warehouses_button = Button(mainFrame, text="Warehouses",
+    warehouses_button = ttk.Button(mainFrame, text="Warehouses",
                                command=lambda: [warehousesFrame.grid(),
                                                 mainFrame.grid_forget(),
                                                 warehouse()],
-                               font=("Arial", 20))
+                               style='my.TButton')
     warehouses_button.grid(row=1, column=0, pady=(75, 0))
 
-    orders_button = Button(mainFrame, text="Orders",
+    orders_button = ttk.Button(mainFrame, text="Orders",
                            command=lambda: [ordersFrame.grid(),
                                             mainFrame.grid_forget(),
                                             orders()],
-                           font=("Arial", 20))
+                           style='my.TButton')
     orders_button.grid(row=2, column=0, pady=(75, 0))
 
-    employees_button = Button(mainFrame, text="Employees",
+    employees_button = ttk.Button(mainFrame, text="Employees",
                               command=lambda: [employeesFrame.grid(),
                                                mainFrame.grid_forget(),
                                                employee()],
-                              font=("Arial", 20))
+                              style='my.TButton')
     employees_button.grid(row=3, column=0, pady=(75, 0))
 
-    log_out_button = Button(mainFrame, text="Log Out",
+    log_out_button = ttk.Button(mainFrame, text="Log Out",
                            command=lambda: [loginFrame.grid(),
                                             mainFrame.grid_forget(),
                                             login()],
-                           font=("Arial", 20))
+                           style='my.TButton')
     log_out_button.grid(row=4, column=0, pady=(75, 0))
 
 def orders():
@@ -118,7 +121,7 @@ def orders():
     box = ttk.Treeview(ordersFrame, selectmode="browse")
     box.grid(row=1, column=0, pady=(0, 0))
 
-    scroll = Scrollbar(ordersFrame, orient="vertical", command=box.yview)
+    scroll = ttk.Scrollbar(ordersFrame, orient="vertical", command=box.yview)
     scroll.grid(row=1, column=1, pady=(0, 0), sticky="ns")
 
     box.configure(yscrollcommand=scroll.set)
@@ -144,35 +147,35 @@ def orders():
     label = Label(ordersFrame, text="Order ID", font=text)
     label.grid(row=2, column=0, pady=(10, 0))
 
-    user_enter = Entry(ordersFrame, font=("Arial", 15))
+    user_enter = Entry(ordersFrame, font=entry)
     user_enter.grid(row=3, column=0, pady=(0, 25))
 
-    search_button = Button(ordersFrame, text="Search Items",
+    search_button = ttk.Button(ordersFrame, text="Search Items",
                                command=lambda: [orderItemsFrame.grid(),
                                                 ordersFrame.grid_forget(),
                                                 order_items(user_enter.get()),
                                                 clear_frame(ordersFrame)],
-                               font=("Arial", 20))
+                               style='my.TButton')
     search_button.grid(row=4, column=0, pady=(0, 0))
 
-    search_button = Button(ordersFrame, text="Create Order",
+    search_button = ttk.Button(ordersFrame, text="Create Order",
                                command=lambda: [createOrderFrame.grid(),
                                                 ordersFrame.grid_forget(),
                                                 create_order(),
                                                 clear_frame(ordersFrame)],
-                               font=("Arial", 20))
+                               style='my.TButton')
     search_button.grid(row=6, column=0, pady=(25, 0))
 
-    delete_button = Button(ordersFrame, text="Delete Order",
+    delete_button = ttk.Button(ordersFrame, text="Delete Order",
                                command=lambda: [del_order()],
-                               font=("Arial", 20))
+                               style='my.TButton')
     delete_button.grid(row=5, column=0, pady=(25, 0))
 
-    back_button = Button(ordersFrame, text="Back",
+    back_button = ttk.Button(ordersFrame, text="Back",
                          command=lambda: [mainFrame.grid(),
                                           ordersFrame.grid_forget(),
                                           clear_frame(ordersFrame)],
-                         font=("Arial", 20))
+                         style='my.TButton')
     back_button.grid(row=7, column=0, pady=(25, 0))
 
 def create_order():
@@ -190,39 +193,39 @@ def create_order():
 
     label = Label(createOrderFrame, text="Order Status", font=text)
     label.grid(row=3, column=0, pady=(0, 0))
-    order_stat_enter = Entry(createOrderFrame, font=("Arial", 15))
+    order_stat_enter = Entry(createOrderFrame, font=entry)
     order_stat_enter.grid(row=4, column=0, pady=(0, 25))
 
     label = Label(createOrderFrame, text="Departure Time", font=text)
     label.grid(row=5, column=0, pady=(0, 0))
-    dep_time_enter = Entry(createOrderFrame, font=("Arial", 15))
+    dep_time_enter = Entry(createOrderFrame, font=entry)
     dep_time_enter.grid(row=6, column=0, pady=(0, 25))
 
     label = Label(createOrderFrame, text="Delivery Address ID", font=text)
     label.grid(row=7, column=0, pady=(0, 0))
-    cap_entry = Entry(createOrderFrame, font=("Arial", 15))
+    cap_entry = Entry(createOrderFrame, font=entry)
     cap_entry.grid(row=8, column=0, pady=(0, 25))
 
     label = Label(createOrderFrame, text="Handler ID", font=text)
     label.grid(row=9, column=0, pady=(0, 0))
-    hand_enter = Entry(createOrderFrame, font=("Arial", 15))
+    hand_enter = Entry(createOrderFrame, font=entry)
     hand_enter.grid(row=10, column=0, pady=(0, 25))
 
 
-    create_button = Button(createOrderFrame, text="Create",
+    create_button = ttk.Button(createOrderFrame, text="Create",
                          command=lambda: [create()],
-                         font=("Arial", 20))
+                         style='my.TButton')
     create_button.grid(row=14, column=0, pady=(20, 0))
 
     label_response = Label(createOrderFrame, text="", font=text)
     label_response.grid(row=15, column=0, pady=(10, 10))
 
-    back_button = Button(createOrderFrame, text="Back",
+    back_button = ttk.Button(createOrderFrame, text="Back",
                          command=lambda: [ordersFrame.grid(),
                                           createOrderFrame.grid_forget(),
                                           orders(),
                                           clear_frame(createOrderFrame)],
-                         font=("Arial", 20))
+                         style='my.TButton')
     back_button.grid(row=16, column=0, pady=(0, 0))
 
 def order_items(temp):
@@ -250,7 +253,8 @@ def order_items(temp):
     box = ttk.Treeview(orderItemsFrame, selectmode="browse")
     box.grid(row=1, column=0, pady=(0, 0))
 
-    scroll = Scrollbar(orderItemsFrame, orient="vertical", command=box.yview)
+    scroll = ttk.Scrollbar(orderItemsFrame, orient="vertical",
+                          command=box.yview)
     scroll.grid(row=1, column=1, pady=(0, 0), sticky="ns")
 
     box.configure(yscrollcommand=scroll.set)
@@ -273,35 +277,35 @@ def order_items(temp):
     label = Label(orderItemsFrame, text="Enter Item ID", font=text)
     label.grid(row=2, column=0, pady=(20, 0))
 
-    item_enter = Entry(orderItemsFrame, font=("Arial", 15))
+    item_enter = Entry(orderItemsFrame, font=entry)
     item_enter.grid(row=3, column=0, pady=(0, 0))
 
     label = Label(orderItemsFrame, text="Enter Quantity", font=text)
     label.grid(row=4, column=0, pady=(20, 0))
 
-    qua_enter = Entry(orderItemsFrame, font=("Arial", 15))
+    qua_enter = Entry(orderItemsFrame, font=entry)
     qua_enter.grid(row=5, column=0, pady=(0, 0))
 
-    add_button = Button(orderItemsFrame, text="Add",
+    add_button = ttk.Button(orderItemsFrame, text="Add",
                          command=lambda: [update()],
-                         font=("Arial", 20))
+                         style='my.TButton')
     add_button.grid(row=13, column=0, pady=(25, 0))
 
-    delete_button = Button(orderItemsFrame, text="Delete",
+    delete_button = ttk.Button(orderItemsFrame, text="Delete",
                          command=lambda: [delete()],
-                         font=("Arial", 20))
+                         style='my.TButton')
     delete_button.grid(row=14, column=0, pady=(25, 0))
 
     label_response = Label(orderItemsFrame, text="", font=text)
     label_response.grid(row=15, column=0, pady=(5, 5))
 
 
-    back_button = Button(orderItemsFrame, text="Back",
+    back_button = ttk.Button(orderItemsFrame, text="Back",
                          command=lambda: [ordersFrame.grid(),
                                           orderItemsFrame.grid_forget(),
                                           orders(),
                                           clear_frame(orderItemsFrame)],
-                         font=("Arial", 20))
+                         style='my.TButton')
     back_button.grid(row=16, column=0, pady=(0, 0))
 
 
@@ -312,7 +316,8 @@ def warehouse():
     box = ttk.Treeview(warehousesFrame, selectmode="browse")
     box.grid(row=1, column=0, pady=(0, 0))
 
-    scroll = Scrollbar(warehousesFrame, orient="vertical", command=box.yview)
+    scroll = ttk.Scrollbar(warehousesFrame, orient="vertical",
+                          command=box.yview)
     scroll.grid(row=1, column=1, pady=(0, 0), sticky="ns")
 
     box.configure(yscrollcommand=scroll.set)
@@ -341,22 +346,22 @@ def warehouse():
     label = Label(warehousesFrame, text="Warehouse ID", font=text)
     label.grid(row=2, column=0, pady=(25, 0))
 
-    user_enter = Entry(warehousesFrame, font=("Arial", 15))
+    user_enter = Entry(warehousesFrame, font=entry)
     user_enter.grid(row=3, column=0, pady=(0, 25))
 
-    update_ware_button = Button(warehousesFrame, text="Update Warehouse",
+    update_ware_button = ttk.Button(warehousesFrame, text="Update Warehouse",
                                command=lambda: [update_ware.grid(),
                                                 warehousesFrame.grid_forget(),
                                                 update_warehouse(user_enter.get()),
                                                 clear_frame(warehousesFrame)],
-                               font=("Arial", 20))
+                               style='my.TButton')
     update_ware_button.grid(row=4, column=0, pady=(0, 0))
 
-    back_button = Button(warehousesFrame, text="Back",
+    back_button = ttk.Button(warehousesFrame, text="Back",
                          command=lambda: [mainFrame.grid(),
                                           warehousesFrame.grid_forget(),
                                           clear_frame(warehousesFrame)],
-                         font=("Arial", 20))
+                         style='my.TButton')
     back_button.grid(row=5, column=0, pady=(50, 0))
 
 def update_warehouse(temp):
@@ -377,49 +382,49 @@ def update_warehouse(temp):
 
     label = Label(update_ware, text="Warehouse Address ID", font=text)
     label.grid(row=3, column=0, pady=(0, 0))
-    add_id_enter = Entry(update_ware, font=("Arial", 15))
+    add_id_enter = Entry(update_ware, font=entry)
     add_id_enter.grid(row=4, column=0, pady=(0, 25))
 
     label = Label(update_ware, text="Capacity", font=text)
     label.grid(row=5, column=0, pady=(0, 0))
-    capacity_enter = Entry(update_ware, font=("Arial", 15))
+    capacity_enter = Entry(update_ware, font=entry)
     capacity_enter.grid(row=6, column=0, pady=(0, 25))
 
     label = Label(update_ware, text="Address Number", font=text)
     label.grid(row=7, column=0, pady=(0, 0))
-    add_num_enter = Entry(update_ware, font=("Arial", 15))
+    add_num_enter = Entry(update_ware, font=entry)
     add_num_enter.grid(row=8, column=0, pady=(0, 25))
 
     label = Label(update_ware, text="Street", font=text)
     label.grid(row=9, column=0, pady=(0, 0))
-    street_enter = Entry(update_ware, font=("Arial", 15))
+    street_enter = Entry(update_ware, font=entry)
     street_enter.grid(row=10, column=0, pady=(0, 25))
 
     label = Label(update_ware, text="City", font=text)
     label.grid(row=11, column=0, pady=(0, 0))
-    city_enter = Entry(update_ware, font=("Arial", 15))
+    city_enter = Entry(update_ware, font=entry)
     city_enter.grid(row=12, column=0, pady=(0, 25))
 
     label = Label(update_ware, text="Zip Code", font=text)
     label.grid(row=13, column=0, pady=(0, 0))
-    zip_enter = Entry(update_ware, font=("Arial", 15))
+    zip_enter = Entry(update_ware, font=entry)
     zip_enter.grid(row=14, column=0, pady=(0, 25))
 
-    ware_update = Button(update_ware, text="Update Warehouse",
+    ware_update = ttk.Button(update_ware, text="Update Warehouse",
                              command=lambda: [ware_update.configure(text="Done"),
                                               up_ware()],
-                             font=("Arial", 20))
+                             style='my.TButton')
     ware_update.grid(row=15, column=0, pady=(0, 0))
 
     label_response = Label(update_ware, text="", font=text)
     label_response.grid(row=16, column=0, pady=(10, 10))
 
-    back_button = Button(update_ware, text="Back",
+    back_button = ttk.Button(update_ware, text="Back",
                          command=lambda: [warehousesFrame.grid(),
                                           update_ware.grid_forget(),
                                           warehouse(),
                                           clear_frame(update_ware)],
-                         font=("Arial", 20))
+                         style='my.TButton')
     back_button.grid(row=17, column=0, pady=(0, 0))
 
 def item():
@@ -429,7 +434,7 @@ def item():
     box = ttk.Treeview(itemsFrame, selectmode="browse")
     box.grid(row=1, column=0, pady=(0, 0))
 
-    scroll = Scrollbar(itemsFrame, orient="vertical", command=box.yview)
+    scroll = ttk.Scrollbar(itemsFrame, orient="vertical", command=box.yview)
     scroll.grid(row=1, column=1, pady=(0, 0), sticky="ns")
 
     box.configure(yscrollcommand=scroll.set)
@@ -458,27 +463,27 @@ def item():
     for i in response.json():
         box.insert("", "end", values=i)
 
-    create_button = Button(itemsFrame, text="Add Item to Warehouse",
+    create_button = ttk.Button(itemsFrame, text="Add Item to Warehouse",
                          command=lambda: [addItemsFrame.grid(),
                                           itemsFrame.grid_forget(),
                                           clear_frame(itemsFrame),
                                           add_item()],
-                         font=("Arial", 20))
+                         style='my.TButton')
     create_button.grid(row=7, column=0, pady=(50, 0))
 
-    create_button = Button(itemsFrame, text="Create Item",
+    create_button = ttk.Button(itemsFrame, text="Create Item",
                          command=lambda: [createItemsFrame.grid(),
                                           itemsFrame.grid_forget(),
                                           clear_frame(itemsFrame),
                                           create_item()],
-                         font=("Arial", 20))
+                         style='my.TButton')
     create_button.grid(row=6, column=0, pady=(50, 0))
 
-    back_button = Button(itemsFrame, text="Back",
+    back_button = ttk.Button(itemsFrame, text="Back",
                          command=lambda: [mainFrame.grid(),
                                           itemsFrame.grid_forget(),
                                           clear_frame(itemsFrame)],
-                         font=("Arial", 20))
+                         style='my.TButton')
     back_button.grid(row=8, column=0, pady=(50, 0))
 
 def add_item():
@@ -497,38 +502,38 @@ def add_item():
 
     label = Label(addItemsFrame, text="Warehouse ID", font=text)
     label.grid(row=1, column=0, pady=(0, 0))
-    warehouse_id_enter = Entry(addItemsFrame, font=("Arial", 15))
+    warehouse_id_enter = Entry(addItemsFrame, font=entry)
     warehouse_id_enter.grid(row=2, column=0, pady=(0, 25))
 
     label = Label(addItemsFrame, text="Item ID", font=text)
     label.grid(row=3, column=0, pady=(0, 0))
-    item_id_enter = Entry(addItemsFrame, font=("Arial", 15))
+    item_id_enter = Entry(addItemsFrame, font=entry)
     item_id_enter.grid(row=4, column=0, pady=(0, 25))
 
     label = Label(addItemsFrame, text="Item Location", font=text)
     label.grid(row=7, column=0, pady=(0, 0))
-    item_loc_enter = Entry(addItemsFrame, font=("Arial", 15))
+    item_loc_enter = Entry(addItemsFrame, font=entry)
     item_loc_enter.grid(row=8, column=0, pady=(0, 25))
 
     label = Label(addItemsFrame, text="Item Quantity", font=text)
     label.grid(row=9, column=0, pady=(0, 0))
-    item_quantity_enter = Entry(addItemsFrame, font=("Arial", 15))
+    item_quantity_enter = Entry(addItemsFrame, font=entry)
     item_quantity_enter.grid(row=10, column=0, pady=(0, 25))
 
     label_response = Label(addItemsFrame, text="", font=text)
     label_response.grid(row=11, column=0, pady=(25, 25))
 
-    create_button = Button(addItemsFrame, text="Add",
+    create_button = ttk.Button(addItemsFrame, text="Add",
                          command=lambda: [add()],
-                         font=("Arial", 20))
+                         style='my.TButton')
     create_button.grid(row=12, column=0, pady=(0, 0))
 
-    back_button = Button(addItemsFrame, text="Back",
+    back_button = ttk.Button(addItemsFrame, text="Back",
                          command=lambda: [itemsFrame.grid(),
                                           addItemsFrame.grid_forget(),
                                           clear_frame(addItemsFrame),
                                           item()],
-                         font=("Arial", 20))
+                         style='my.TButton')
     back_button.grid(row=13, column=0, pady=(50, 0))
 def create_item():
     def create():
@@ -544,33 +549,33 @@ def create_item():
 
     label = Label(createItemsFrame, text="Item Name", font=text)
     label.grid(row=1, column=0, pady=(0, 0))
-    item_name_enter = Entry(createItemsFrame, font=("Arial", 15))
+    item_name_enter = Entry(createItemsFrame, font=entry)
     item_name_enter.grid(row=2, column=0, pady=(0, 25))
 
     label = Label(createItemsFrame, text="Item Weight", font=text)
     label.grid(row=3, column=0, pady=(0, 0))
-    item_weight_enter = Entry(createItemsFrame, font=("Arial", 15))
+    item_weight_enter = Entry(createItemsFrame, font=entry)
     item_weight_enter.grid(row=4, column=0, pady=(0, 25))
 
     label = Label(createItemsFrame, text="Item Price", font=text)
     label.grid(row=5, column=0, pady=(0, 0))
-    item_price_enter = Entry(createItemsFrame, font=("Arial", 15))
+    item_price_enter = Entry(createItemsFrame, font=entry)
     item_price_enter.grid(row=6, column=0, pady=(0, 25))
 
     label_response = Label(createItemsFrame, text="", font=text)
     label_response.grid(row=7, column=0, pady=(25, 25))
 
-    create_button = Button(createItemsFrame, text="Create",
+    create_button = ttk.Button(createItemsFrame, text="Create",
                          command=lambda: [create()],
-                         font=("Arial", 20))
+                         style='my.TButton')
     create_button.grid(row=8, column=0, pady=(50, 0))
 
-    back_button = Button(createItemsFrame, text="Back",
+    back_button = ttk.Button(createItemsFrame, text="Back",
                          command=lambda: [itemsFrame.grid(),
                                           createItemsFrame.grid_forget(),
                                           clear_frame(createItemsFrame),
                                           item()],
-                         font=("Arial", 20))
+                         style='my.TButton')
     back_button.grid(row=9, column=0, pady=(50, 0))
 
 def employee():
@@ -585,7 +590,8 @@ def employee():
     box = ttk.Treeview(employeesFrame, selectmode="browse")
     box.grid(row=1, column=0, pady=(0, 0))
 
-    scroll = Scrollbar(employeesFrame, orient="vertical", command=box.yview)
+    scroll = ttk.Scrollbar(employeesFrame, orient="vertical",
+                           command=box.yview)
     scroll.grid(row=1, column=1, pady=(0, 0), sticky="ns")
 
     box.configure(yscrollcommand=scroll.set)
@@ -609,35 +615,35 @@ def employee():
     label = Label(employeesFrame, text="Username", font=text)
     label.grid(row=2, column=0, pady=(25, 0))
 
-    user_enter = Entry(employeesFrame, font=("Arial", 15))
+    user_enter = Entry(employeesFrame, font=entry)
     user_enter.grid(row=3, column=0, pady=(0, 25))
 
-    update_emp_button = Button(employeesFrame, text="Update Employee",
+    update_emp_button = ttk.Button(employeesFrame, text="Update Employee",
                                command=lambda: [update_emp.grid(),
                                                 employeesFrame.grid_forget(),
                                                 update_employee(user_enter.get()),
                                                 clear_frame(employeesFrame)],
-                               font=("Arial", 20))
+                               style='my.TButton')
     update_emp_button.grid(row=4, column=0, pady=(0, 0))
 
-    del_button = Button(employeesFrame, text="Delete Employee",
+    del_button = ttk.Button(employeesFrame, text="Delete Employee",
                         command=lambda: [del_emp()],
-                        font=("Arial", 20))
+                        style='my.TButton')
     del_button.grid(row=5, column=0, pady=(25, 0))
 
-    cre_button = Button(employeesFrame, text="Create Employee",
+    cre_button = ttk.Button(employeesFrame, text="Create Employee",
                         command=lambda: [create_emp.grid(),
                                          employeesFrame.grid_forget(),
                                          create_employee(),
                                          clear_frame(employeesFrame)],
-                        font=("Arial", 20))
+                        style='my.TButton')
     cre_button.grid(row=6, column=0, pady=(25, 0))
 
-    back_button = Button(employeesFrame, text="Back",
+    back_button = ttk.Button(employeesFrame, text="Back",
                          command=lambda: [mainFrame.grid(),
                                           employeesFrame.grid_forget(),
                                           clear_frame(employeesFrame)],
-                         font=("Arial", 20))
+                         style='my.TButton')
     back_button.grid(row=7, column=0, pady=(25, 0))
 
 
@@ -658,48 +664,48 @@ def create_employee():
 
     label = Label(create_emp, text="First Name", font=text)
     label.grid(row=1, column=0, pady=(0, 0))
-    first_enter = Entry(create_emp, font=("Arial", 15))
+    first_enter = Entry(create_emp, font=entry)
     first_enter.grid(row=2, column=0, pady=(0, 25))
 
     label = Label(create_emp, text="Middle Name", font=text)
     label.grid(row=3, column=0, pady=(0, 0))
-    mid_enter = Entry(create_emp, font=("Arial", 15))
+    mid_enter = Entry(create_emp, font=entry)
     mid_enter.grid(row=4, column=0, pady=(0, 25))
 
     label = Label(create_emp, text="Last Name", font=text)
     label.grid(row=5, column=0, pady=(0, 0))
-    last_enter = Entry(create_emp, font=("Arial", 15))
+    last_enter = Entry(create_emp, font=entry)
     last_enter.grid(row=6, column=0, pady=(0, 25))
 
     label = Label(create_emp, text="Job Title", font=text)
     label.grid(row=7, column=0, pady=(0, 0))
-    job_enter = Entry(create_emp, font=("Arial", 15))
+    job_enter = Entry(create_emp, font=entry)
     job_enter.grid(row=8, column=0, pady=(0, 25))
 
     label = Label(create_emp, text="Username", font=text)
     label.grid(row=9, column=0, pady=(0, 0))
-    user_enter = Entry(create_emp, font=("Arial", 15))
+    user_enter = Entry(create_emp, font=entry)
     user_enter.grid(row=10, column=0, pady=(0, 25))
 
     label = Label(create_emp, text="Password", font=text)
     label.grid(row=11, column=0, pady=(0, 0))
-    pass_enter = Entry(create_emp, font=("Arial", 15))
+    pass_enter = Entry(create_emp, font=entry)
     pass_enter.grid(row=12, column=0, pady=(0, 0))
 
     label_response = Label(create_emp, font=text)
     label_response.grid(row=13, column=0, pady=(20, 20))
 
-    create_button = Button(create_emp, text="Create",
+    create_button = ttk.Button(create_emp, text="Create",
                            command=lambda: [create_user()],
-                           font=("Arial", 20))
+                           style='my.TButton')
     create_button.grid(row=14, column=0, pady=(0, 25))
 
-    back_button = Button(create_emp, text="Back",
+    back_button = ttk.Button(create_emp, text="Back",
                          command=lambda: [employeesFrame.grid(),
                                           create_emp.grid_forget(),
                                           employee(),
                                           clear_frame(create_emp)],
-                         font=("Arial", 20))
+                         style='my.TButton')
     back_button.grid(row=15, column=0, pady=(0, 0))
 
 
@@ -729,54 +735,54 @@ def update_employee(temp):
     label = Label(update_emp, text="Username", font=text)
     label.grid(row=1, column=0, pady=(0, 0))
 
-    user_enter = Entry(update_emp, font=("Arial", 15))
+    user_enter = Entry(update_emp, font=entry)
     user_enter.grid(row=2, column=0, pady=(0, 0))
 
-    user_update = Button(update_emp, text="Update Username",
+    user_update = ttk.Button(update_emp, text="Update Username",
                          command=lambda: [user_update.configure(text="Done"),
                                           up_user()],
-                         font=("Arial", 20))
+                         style='my.TButton')
     user_update.grid(row=3, column=0, pady=(10, 50))
 
     label = Label(update_emp, text="Job", font=text)
     label.grid(row=4, column=0, pady=(0, 0))
 
-    job_enter = Entry(update_emp, font=("Arial", 15))
+    job_enter = Entry(update_emp, font=entry)
     job_enter.grid(row=5, column=0, pady=(0, 0))
 
-    job_update = Button(update_emp, text="Update Job",
+    job_update = ttk.Button(update_emp, text="Update Job",
                         command=lambda: [job_update.configure(text="Done"),
                                          up_title()],
-                        font=("Arial", 20))
+                        style='my.TButton')
     job_update.grid(row=6, column=0, pady=(10, 50))
 
     label = Label(update_emp, text="Old Password", font=text)
     label.grid(row=7, column=0, pady=(0, 0))
 
-    password_old = Entry(update_emp, font=("Arial", 15))
+    password_old = Entry(update_emp, font=entry)
     password_old.grid(row=8, column=0, pady=(0, 0))
 
     label = Label(update_emp, text="New Password", font=text)
     label.grid(row=9, column=0, pady=(0, 0))
 
-    password_new = Entry(update_emp, font=("Arial", 15))
+    password_new = Entry(update_emp, font=entry)
     password_new.grid(row=10, column=0, pady=(0, 0))
 
-    password_update = Button(update_emp, text="Update Password",
+    password_update = ttk.Button(update_emp, text="Update Password",
                              command=lambda: [password_update.configure(text="Done"),
                                               up_pass()],
-                             font=("Arial", 20))
+                             style='my.TButton')
     password_update.grid(row=11, column=0, pady=(10, 25))
 
     label_response = Label(update_emp, text="", font=text)
     label_response.grid(row=12, column=0, pady=(0, 0))
 
-    back_button = Button(update_emp, text="Back",
+    back_button = ttk.Button(update_emp, text="Back",
                          command=lambda: [employeesFrame.grid(),
                                           update_emp.grid_forget(),
                                           employee(),
                                           clear_frame(update_emp)],
-                         font=("Arial", 20))
+                         style='my.TButton')
     back_button.grid(row=13, column=0, pady=(0, 0))
 
 
