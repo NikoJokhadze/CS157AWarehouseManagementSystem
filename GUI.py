@@ -236,8 +236,8 @@ def order_items(temp):
                                       "itemQuantity": qua_enter.get(),
                                       "warehouseID": ware_enter.get()})
         response = json.loads(response.text)
-        label_response.config(text=response["message"])
         clear_frame(ordersFrame)
+        label_response.config(text=response["message"])
         order_items(temp)
     def delete():
         response = requests.delete("http://127.0.0.1:105/orders/delete_item_from_order",
@@ -245,8 +245,8 @@ def order_items(temp):
                                        "itemID": item_enter.get(),
                                        "warehouseID": ware_enter.get()})
         response = json.loads(response.text)
-        label_response.config(text=response["message"])
         clear_frame(ordersFrame)
+        label_response.config(text=response["message"])
         order_items(temp)
 
     label = Label(orderItemsFrame, text=f"Order {temp}", font=title)
@@ -304,8 +304,8 @@ def order_items(temp):
                          style='my.TButton')
     delete_button.grid(row=14, column=0, pady=(25, 0))
 
-    label_response = Label(orderItemsFrame, text="", font=text)
-    label_response.grid(row=15, column=0, pady=(0, 0))
+    label_response = Label(orderItemsFrame, text=" ", font=text)
+    label_response.grid(row=15, column=0, pady=(5, 5))
 
 
     back_button = ttk.Button(orderItemsFrame, text="Back",
