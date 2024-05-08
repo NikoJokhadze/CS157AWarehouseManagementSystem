@@ -8,7 +8,7 @@ from getpass import getpass
 
 try:  # Surrounding the connection in a try-except block to catch all connection errors
     # password = getpass("Enter your password for MySQL: ")
-    conn = mysql.connector.connect(user="root", password="NikoMySQL_13",
+    conn = mysql.connector.connect(user="root", password="mati11a",
                                    host='127.0.0.1', database="WarehouseSystem")
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:  # If the username or password is wrong, it's caught here
@@ -186,9 +186,10 @@ def get_items_by_warehouse():
         return jsonify({'message': 'Must enter warehouse ID to search by warehouse.'}), 400
 
     cursor = conn.cursor()
-    cursor.execute("SELECT w.warehouseID, i.itemID, i.itemName, i.itemWeight, i.itemPrice, w.itemQuantity "
+    cursor.execute("SELECT i.itemID, i.itemName, i.itemWeight, i.itemPrice, w.itemQuantity, w.warehouseID, w.itemLocation "
                    "FROM Item i INNER JOIN ItemInWarehouse w ON i.itemID = w.itemID "
-                   "WHERE warehouseID = %s", (warehouseID,))
+                   "WHERE warehouseID = %s"
+                   "ORDER BY i.itemID", (warehouseID,))
     data = cursor.fetchall()
     if len(data) == 0:
         return jsonify({'message': "There are no items in this warehouse."})
@@ -206,7 +207,7 @@ def get_items_by_name():
         return jsonify({'message': 'Must enter item name to search by item.'}), 400
 
     cursor = conn.cursor()
-    cursor.execute("SELECT i.itemID, i.itemName, i.itemWeight, i.itemPrice, w.itemQuantity, w.warehouseID "
+    cursor.execute("SELECT i.itemID, i.itemName, i.itemWeight, i.itemPrice, w.itemQuantity, w.warehouseID, w.itemLocation "
                    "FROM Item i INNER JOIN ItemInWarehouse w ON i.itemID = w.itemID "
                    "WHERE itemName = %s", (itemName,))
     data = cursor.fetchall()

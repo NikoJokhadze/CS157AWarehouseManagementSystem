@@ -52,10 +52,10 @@ def login():
             mainFrame.grid()
             clear_frame(loginFrame)
         else:
-            login_button.configure(text="Wrong", bg="red")
-            login_button.after(1000, lambda: login_button.configure(text="Enter", bg="#F0F0F0"))
+            login_button.configure(text="Wrong")
+            login_button.after(1000, lambda: login_button.configure(text="Enter"))
 
-    label = ttk.Label(loginFrame, text="Login", font=title)
+    label = ttk.Label(loginFrame, text="", font=title)
     label.grid(row=0, column=0, pady=(0, 150))
 
     login_label = ttk.Label(loginFrame, text="Username", font=text)
@@ -115,8 +115,8 @@ def orders():
         clear_frame(ordersFrame)
         orders()
 
-    label = Label(ordersFrame, text="This the order frame", font=title)
-    label.grid(row=0, column=0, pady=(0, 25))
+    label = Label(ordersFrame, text="", font=title)
+    label.grid(row=0, column=0, pady=(0, 50))
 
     box = ttk.Treeview(ordersFrame, selectmode="browse")
     box.grid(row=1, column=0, pady=(0, 0))
@@ -188,7 +188,7 @@ def create_order():
         response = json.loads(response.text)
         label_response.config(text=response["message"])
 
-    label = Label(createOrderFrame, text="This is create order", font=title)
+    label = Label(createOrderFrame, text="", font=title)
     label.grid(row=0, column=0, pady=(0, 50))
 
     label = Label(createOrderFrame, text="Order Status", font=text)
@@ -233,7 +233,8 @@ def order_items(temp):
         response = requests.post("http://127.0.0.1:105/orders/add_item_to_order",
                                 json={"orderID": temp,
                                       "itemID": item_enter.get(),
-                                      "itemQuantity": qua_enter.get()})
+                                      "itemQuantity": qua_enter.get(),
+                                      "warehouseID": ware_enter.get()})
         response = json.loads(response.text)
         label_response.config(text=response["message"])
         clear_frame(ordersFrame)
@@ -241,14 +242,15 @@ def order_items(temp):
     def delete():
         response = requests.delete("http://127.0.0.1:105/orders/delete_item_from_order",
                                  json={"orderID": temp,
-                                       "itemID": item_enter.get()})
+                                       "itemID": item_enter.get(),
+                                       "warehouseID": ware_enter.get()})
         response = json.loads(response.text)
         label_response.config(text=response["message"])
         clear_frame(ordersFrame)
         order_items(temp)
 
-    label = Label(orderItemsFrame, text=f"This is order {temp}", font=title)
-    label.grid(row=0, column=0, pady=(0, 25))
+    label = Label(orderItemsFrame, text=f"Order {temp}", font=title)
+    label.grid(row=0, column=0, pady=(0, 20))
 
     box = ttk.Treeview(orderItemsFrame, selectmode="browse")
     box.grid(row=1, column=0, pady=(0, 0))
@@ -275,21 +277,27 @@ def order_items(temp):
         box.insert("", "end", values=i)
 
     label = Label(orderItemsFrame, text="Enter Item ID", font=text)
-    label.grid(row=2, column=0, pady=(20, 0))
+    label.grid(row=2, column=0, pady=(15, 0))
 
     item_enter = Entry(orderItemsFrame, font=entry)
     item_enter.grid(row=3, column=0, pady=(0, 0))
 
     label = Label(orderItemsFrame, text="Enter Quantity", font=text)
-    label.grid(row=4, column=0, pady=(20, 0))
+    label.grid(row=4, column=0, pady=(15, 0))
 
     qua_enter = Entry(orderItemsFrame, font=entry)
     qua_enter.grid(row=5, column=0, pady=(0, 0))
 
+    label = Label(orderItemsFrame, text="Enter Warehouse ID", font=text)
+    label.grid(row=6, column=0, pady=(15, 0))
+
+    ware_enter = Entry(orderItemsFrame, font=entry)
+    ware_enter.grid(row=7, column=0, pady=(0, 0))
+
     add_button = ttk.Button(orderItemsFrame, text="Add",
                          command=lambda: [update()],
                          style='my.TButton')
-    add_button.grid(row=13, column=0, pady=(25, 0))
+    add_button.grid(row=13, column=0, pady=(20, 0))
 
     delete_button = ttk.Button(orderItemsFrame, text="Delete",
                          command=lambda: [delete()],
@@ -297,7 +305,7 @@ def order_items(temp):
     delete_button.grid(row=14, column=0, pady=(25, 0))
 
     label_response = Label(orderItemsFrame, text="", font=text)
-    label_response.grid(row=15, column=0, pady=(5, 5))
+    label_response.grid(row=15, column=0, pady=(0, 0))
 
 
     back_button = ttk.Button(orderItemsFrame, text="Back",
@@ -310,7 +318,7 @@ def order_items(temp):
 
 
 def warehouse():
-    label = Label(warehousesFrame, text="This the warehouse frame", font=title)
+    label = Label(warehousesFrame, text="", font=title)
     label.grid(row=0, column=0, pady=(0, 100))
 
     box = ttk.Treeview(warehousesFrame, selectmode="browse")
@@ -377,7 +385,7 @@ def update_warehouse(temp):
         response = json.loads(response.text)
         label_response.config(text=response["message"])
 
-    label = Label(update_ware, text=f"Update Warehouse {temp}", font=title)
+    label = Label(update_ware, text=f"Warehouse ({temp})", font=title)
     label.grid(row=0, column=0, pady=(0, 25))
 
     label = Label(update_ware, text="Warehouse Address ID", font=text)
@@ -428,8 +436,23 @@ def update_warehouse(temp):
     back_button.grid(row=17, column=0, pady=(0, 0))
 
 def item():
-    label = Label(itemsFrame, text="This the item frame", font=title)
-    label.grid(row=0, column=0, pady=(0, 100))
+    def search():
+        for x in box.get_children():
+            box.delete(x)
+        if search_enter.get().isnumeric():
+            response = requests.get(f"http://127.0.0.1:105/item/get_items_by_warehouse",
+                                    json={"warehouseID": search_enter.get()})
+            for i in response.json():
+                box.insert("", "end", values=i)
+        else:
+
+            response = requests.get(f"http://127.0.0.1:105/item/get_items_by_name",
+                                    json={"itemName": search_enter.get()})
+            for i in response.json():
+                box.insert("", "end", values=i)
+
+    label = Label(itemsFrame, text="", font=title)
+    label.grid(row=0, column=0, pady=(0, 25))
 
     box = ttk.Treeview(itemsFrame, selectmode="browse")
     box.grid(row=1, column=0, pady=(0, 0))
@@ -469,7 +492,18 @@ def item():
                                           clear_frame(itemsFrame),
                                           add_item()],
                          style='my.TButton')
-    create_button.grid(row=7, column=0, pady=(50, 0))
+    create_button.grid(row=7, column=0, pady=(25, 0))
+
+    search_button = ttk.Button(itemsFrame, text="Search",
+                         command=lambda: [search()],
+                         style='my.TButton')
+    search_button.grid(row=4, column=0, pady=(25, 0))
+
+    label = Label(itemsFrame, text="Item Name or WarehouseID", font=text)
+    label.grid(row=2, column=0, pady=(25, 0))
+
+    search_enter = Entry(itemsFrame, font=entry)
+    search_enter.grid(row=3, column=0, pady=(0, 0))
 
     create_button = ttk.Button(itemsFrame, text="Create Item",
                          command=lambda: [createItemsFrame.grid(),
@@ -477,14 +511,14 @@ def item():
                                           clear_frame(itemsFrame),
                                           create_item()],
                          style='my.TButton')
-    create_button.grid(row=6, column=0, pady=(50, 0))
+    create_button.grid(row=6, column=0, pady=(25, 0))
 
     back_button = ttk.Button(itemsFrame, text="Back",
                          command=lambda: [mainFrame.grid(),
                                           itemsFrame.grid_forget(),
                                           clear_frame(itemsFrame)],
                          style='my.TButton')
-    back_button.grid(row=8, column=0, pady=(50, 0))
+    back_button.grid(row=8, column=0, pady=(25, 0))
 
 def add_item():
     def add():
@@ -497,7 +531,7 @@ def add_item():
         label_response.config(text=response["message"])
 
 
-    label = Label(addItemsFrame, text="This the add item frame", font=title)
+    label = Label(addItemsFrame, text="", font=title)
     label.grid(row=0, column=0, pady=(0, 100))
 
     label = Label(addItemsFrame, text="Warehouse ID", font=text)
@@ -544,7 +578,7 @@ def create_item():
         response = json.loads(response.text)
         label_response.config(text=response["message"])
 
-    label = Label(createItemsFrame, text="This the create item frame", font=title)
+    label = Label(createItemsFrame, text="", font=title)
     label.grid(row=0, column=0, pady=(0, 100))
 
     label = Label(createItemsFrame, text="Item Name", font=text)
@@ -584,7 +618,7 @@ def employee():
         clear_frame(employeesFrame)
         employee()
 
-    label = Label(employeesFrame, text="This the employee frame", font=title)
+    label = Label(employeesFrame, text="", font=title)
     label.grid(row=0, column=0, pady=(0, 25))
 
     box = ttk.Treeview(employeesFrame, selectmode="browse")
@@ -599,9 +633,9 @@ def employee():
     box['show'] = 'headings'
 
     box.column("1", width=50)
-    box.column("2", width=180)
-    box.column("3", width=80)
-    box.column("4", width=80)
+    box.column("2", width=300)
+    box.column("3", width=150)
+    box.column("4", width=150)
 
     box.heading("1", text="ID")
     box.heading("2", text="Name")
@@ -659,7 +693,7 @@ def create_employee():
         response = json.loads(response.text)
         label_response.config(text=response["message"])
 
-    label = Label(create_emp, text=f"Create Employee", font=title)
+    label = Label(create_emp, text=f"", font=title)
     label.grid(row=0, column=0, pady=(0, 0))
 
     label = Label(create_emp, text="First Name", font=text)
