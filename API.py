@@ -8,7 +8,7 @@ from getpass import getpass
 
 try:  # Surrounding the connection in a try-except block to catch all connection errors
     # password = getpass("Enter your password for MySQL: ")
-    conn = mysql.connector.connect(user="root", password="NikoMySQL_13",
+    conn = mysql.connector.connect(user="root", password="mati11a",
                                    host='127.0.0.1', database="WarehouseSystem")
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:  # If the username or password is wrong, it's caught here
@@ -516,17 +516,16 @@ def create_address():
     street = data.get("street")
     city = data.get("city")
     zipCode = data.get("zipCode")
-    warehouse = data.get("warehouse")
 
-    if addressNum == "" or street == "" or city == "" or zipCode == "" or warehouse == "":
+    if addressNum == "" or street == "" or city == "" or zipCode == "":
         return jsonify({'message': 'Missing fields'}), 400
 
     try:
         cursor = conn.cursor()
 
-        insert_query = ("Insert into Addresses (addressNum, street, city, zipCode, warehouse) "
-                        "values (%s, %s, %s, %s, %s)")
-        cursor.execute(insert_query, (addressNum, street, city, zipCode, warehouse))
+        insert_query = ("Insert into Addresses (addressNum, street, city, zipCode) "
+                        "values (%s, %s, %s, %s)")
+        cursor.execute(insert_query, (addressNum, street, city, zipCode))
         conn.commit()
         return jsonify({'message': 'Data added successfully'}), 201
     except Exception as e:
@@ -550,7 +549,7 @@ def delete_address():
         conn.commit()
         return jsonify({'message': 'Data deleted successfully'}), 200
     except Exception as e:
-        return jsonify({'message': 'Failed to delete data', 'error': str(e)}), 500
+        return jsonify({'message': 'Failed to delete data there may be a warehouse or order with this data', 'error': str(e)}), 500
     finally:
         cursor.close()
 

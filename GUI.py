@@ -107,7 +107,7 @@ def main():
     address_button = ttk.Button(mainFrame, text="Addresses",
                               command=lambda: [addressFrame.grid(),
                                                mainFrame.grid_forget(),
-                                               address()],
+                                               address({'message':""})],
                               style='my.TButton')
     address_button.grid(row=4, column=0, pady=(55, 0))
 
@@ -118,9 +118,12 @@ def main():
                            style='my.TButton')
     log_out_button.grid(row=5, column=0, pady=(55, 0))
 
-def address():
-    def delete():
-        pass
+def address(temp):
+    def delete_add():
+        response = requests.delete("http://127.0.0.1:105/addresses/delete_address", json={"addressID": user_enter.get()})
+        response = json.loads(response.text)
+        clear_frame(addressFrame)
+        address(response)
 
     label = Label(addressFrame, text="", font=title)
     label.grid(row=0, column=0, pady=(0, 50))
@@ -132,7 +135,7 @@ def address():
     scroll.grid(row=1, column=1, pady=(0, 0), sticky="ns")
 
     box.configure(yscrollcommand=scroll.set)
-    box["columns"] = ("1", "2", "3", "4", "5", "6")
+    box["columns"] = ("1", "2", "3", "4", "5")
     box['show'] = 'headings'
 
     box.column("1", width=100)
@@ -140,15 +143,18 @@ def address():
     box.column("3", width=200)
     box.column("4", width=125)
     box.column("5", width=100)
-    box.column("6", width=100)
 
 
-    box.heading("1", text="Order ID")
-    box.heading("2", text="Status")
-    box.heading("3", text="Departure Time")
-    box.heading("4", text="Delivery Address ID")
-    box.heading("5", text="Handler ID")
-    box.heading("6", text="Handler ID")
+    box.heading("1", text="Address ID")
+    box.heading("2", text="Address Num")
+    box.heading("3", text="Street")
+    box.heading("4", text="City")
+    box.heading("5", text="Zipcode")
+
+    response = requests.get("http://127.0.0.1:105/addresses/get_addresses")
+    for i in response.json():
+        box.insert("", "end", values=i)
+
 
     label = Label(addressFrame, text="Address ID", font=text)
     label.grid(row=2, column=0, pady=(30, 0))
@@ -156,10 +162,15 @@ def address():
     user_enter = Entry(addressFrame, font=entry)
     user_enter.grid(row=3, column=0, pady=(0, 30))
 
+    temp = temp["message"]
+
+    label_response = Label(addressFrame, text=f"{temp}", font=text)
+    label_response.grid(row=4, column=0, pady=(0, 0))
+
     back_button = ttk.Button(addressFrame, text="Delete",
-                         command=lambda: [delete()],
+                         command=lambda: [delete_add()],
                          style='my.TButton')
-    back_button.grid(row=4, column=0, pady=(0, 50))
+    back_button.grid(row=5, column=0, pady=(0, 50))
 
     back_button = ttk.Button(addressFrame, text="Create",
                          command=lambda: [addAddressFrame.grid(),
@@ -167,7 +178,7 @@ def address():
                                           clear_frame(addressFrame),
                                           add_address()],
                          style='my.TButton')
-    back_button.grid(row=5, column=0, pady=(0, 50))
+    back_button.grid(row=6, column=0, pady=(0, 50))
 
     back_button = ttk.Button(addressFrame, text="Back",
                          command=lambda: [mainFrame.grid(),
@@ -177,13 +188,51 @@ def address():
     back_button.grid(row=7, column=0, pady=(0, 50))
 
 def add_address():
+    def create_add():
+        response = requests.post("http://127.0.0.1:105/addresses/create_address",
+                                   json={"addressNum": add_num_enter.get(),
+                                         "street": street_enter.get(),
+                                         "city": street_enter.get(),
+                                         "zipCode": zip_enter.get()})
+        response = json.loads(response.text)
+        label_response.config(text=response["message"])
+
+
+    label = Label(addAddressFrame, text="Address Num", font=text)
+    label.grid(row=3, column=0, pady=(150, 0))
+    add_num_enter = Entry(addAddressFrame, font=entry)
+    add_num_enter.grid(row=4, column=0, pady=(0, 25))
+
+    label = Label(addAddressFrame, text="Street", font=text)
+    label.grid(row=5, column=0, pady=(0, 0))
+    street_enter = Entry(addAddressFrame, font=entry)
+    street_enter.grid(row=6, column=0, pady=(0, 25))
+
+    label = Label(addAddressFrame, text="City", font=text)
+    label.grid(row=7, column=0, pady=(0, 0))
+    city_entry = Entry(addAddressFrame, font=entry)
+    city_entry.grid(row=8, column=0, pady=(0, 25))
+
+    label = Label(addAddressFrame, text="Zipcode", font=text)
+    label.grid(row=9, column=0, pady=(0, 0))
+    zip_enter = Entry(addAddressFrame, font=entry)
+    zip_enter.grid(row=10, column=0, pady=(0, 25))
+
+    label_response = Label(addAddressFrame, text="", font=text)
+    label_response.grid(row=15, column=0, pady=(10, 10))
+
+    back_button = ttk.Button(addAddressFrame, text="Create",
+                         command=lambda: [create_add()],
+                         style='my.TButton')
+    back_button.grid(row=19, column=0, pady=(0, 50))
+
     back_button = ttk.Button(addAddressFrame, text="Back",
                          command=lambda: [addressFrame.grid(),
                                           addAddressFrame.grid_forget(),
                                           clear_frame(addAddressFrame),
-                                          address()],
+                                          address({'message':""})],
                          style='my.TButton')
-    back_button.grid(row=7, column=0, pady=(0, 50))
+    back_button.grid(row=20, column=0, pady=(0, 50))
 def orders():
     def del_order():
         requests.delete("http://127.0.0.1:105/orders/delete_order", json={"orderID": user_enter.get()})
@@ -205,7 +254,7 @@ def orders():
 
     box.column("1", width=100)
     box.column("2", width=100)
-    box.column("3", width=200)
+    box.column("3", width=300)
     box.column("4", width=125)
     box.column("5", width=100)
 
@@ -228,7 +277,7 @@ def orders():
     search_button = ttk.Button(ordersFrame, text="Search Items",
                                command=lambda: [orderItemsFrame.grid(),
                                                 ordersFrame.grid_forget(),
-                                                order_items(user_enter.get()),
+                                                order_items(user_enter.get(),{'message':""}),
                                                 clear_frame(ordersFrame)],
                                style='my.TButton')
     search_button.grid(row=4, column=0, pady=(0, 0))
@@ -303,7 +352,7 @@ def create_order():
                          style='my.TButton')
     back_button.grid(row=16, column=0, pady=(0, 0))
 
-def order_items(temp):
+def order_items(temp,error):
     def update():
         response = requests.post("http://127.0.0.1:105/orders/add_item_to_order",
                                 json={"orderID": temp,
@@ -312,8 +361,7 @@ def order_items(temp):
                                       "warehouseID": ware_enter.get()})
         response = json.loads(response.text)
         clear_frame(ordersFrame)
-        label_response.config(text=response["message"])
-        order_items(temp)
+        order_items(temp,response)
     def delete():
         response = requests.delete("http://127.0.0.1:105/orders/delete_item_from_order",
                                  json={"orderID": temp,
@@ -379,7 +427,9 @@ def order_items(temp):
                          style='my.TButton')
     delete_button.grid(row=14, column=0, pady=(25, 0))
 
-    label_response = Label(orderItemsFrame, text=" ", font=text)
+    error = error["message"]
+
+    label_response = Label(orderItemsFrame, text=f"{error}", font=text)
     label_response.grid(row=15, column=0, pady=(5, 5))
 
 
@@ -497,8 +547,7 @@ def update_warehouse(temp):
     zip_enter.grid(row=14, column=0, pady=(0, 25))
 
     ware_update = ttk.Button(update_ware, text="Update Warehouse",
-                             command=lambda: [ware_update.configure(text="Done"),
-                                              up_ware()],
+                             command=lambda: [up_ware()],
                              style='my.TButton')
     ware_update.grid(row=15, column=0, pady=(0, 0))
 
@@ -851,8 +900,7 @@ def update_employee(temp):
     user_enter.grid(row=2, column=0, pady=(0, 0))
 
     user_update = ttk.Button(update_emp, text="Update Username",
-                         command=lambda: [user_update.configure(text="Done"),
-                                          up_user()],
+                         command=lambda: [up_user()],
                          style='my.TButton')
     user_update.grid(row=3, column=0, pady=(10, 50))
 
@@ -863,8 +911,7 @@ def update_employee(temp):
     job_enter.grid(row=5, column=0, pady=(0, 0))
 
     job_update = ttk.Button(update_emp, text="Update Job",
-                        command=lambda: [job_update.configure(text="Done"),
-                                         up_title()],
+                        command=lambda: [up_title()],
                         style='my.TButton')
     job_update.grid(row=6, column=0, pady=(10, 50))
 
@@ -881,8 +928,7 @@ def update_employee(temp):
     password_new.grid(row=10, column=0, pady=(0, 0))
 
     password_update = ttk.Button(update_emp, text="Update Password",
-                             command=lambda: [password_update.configure(text="Done"),
-                                              up_pass()],
+                             command=lambda: [up_pass()],
                              style='my.TButton')
     password_update.grid(row=11, column=0, pady=(10, 25))
 
