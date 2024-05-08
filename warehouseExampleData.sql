@@ -1,18 +1,18 @@
 Use WarehouseSystem;
 
-insert into Addresses (addressID, addressNum, street, city, zipCode, warehouse) values
-    (252, 1155, "S Yankton Avenue", "San Jose", 95121, true),
-    (504, 90822, "East Street", "Washington D.C.", 20005, false),
-    (178, 55, "Green Hill Road", "Los Angeles", 90048, true),
-    (902, 33, "Spooner Street", "Chicago", 60602, false),
-    (346, 601, "N Alpine Drive", "Austin", 78653, false),
-    (437, 7, "12th Avenue", "Oakland", 94605, false),
-    (202, 542, "Johnson Drive", "New York", 10010, true);
+insert into Addresses (addressNum, street, city, zipCode, warehouse) values
+    (1155, "S Yankton Avenue", "San Jose", 95121, true),
+    (90822, "East Street", "Washington D.C.", 20005, false),
+    (55, "Green Hill Road", "Los Angeles", 90048, true),
+    (33, "Spooner Street", "Chicago", 60602, false),
+    (601, "N Alpine Drive", "Austin", 78653, false),
+    (7, "12th Avenue", "Oakland", 94605, false),
+    (542, "Johnson Drive", "New York", 10010, true);
 
 insert into Warehouse (warehouseID, warehouseAddressID, capacity) values
-    (12345, 252, 40000),
-    (87439, 202, 6000),
-    (78312, 178, 25000);
+    (12345, 1, 40000),
+    (87439, 7, 6000),
+    (78312, 3, 25000);
 
 insert into Employee (firstName, middleName, lastName, jobTitle) values
     ("Mary", NULL, "Poppins", "CEO"),
@@ -63,10 +63,10 @@ insert into ItemInWarehouse (warehouseID, itemID, arrivalTime, itemLocation, ite
     (87439, 11, '2024-02-29', "D2", 80);
 
 insert into Orders (orderStatus, departureTime, deliveryAddressID, handlerID) values
-	("Delivered", '2024-03-01', 504, 1007),
-	("Shippped", '2024-03-15', 902, 1004),
-	("Received", NULL, 437, 1006),
-	("Received", NULL, 346, 1005);
+	("Delivered", '2024-03-01', 2, 1007),
+	("Shippped", '2024-03-15', 4, 1004),
+	("Received", NULL, 6, 1006),
+	("Received", NULL, 5, 1005);
 
 insert into ItemsOrdered (orderID, itemID, itemQuantity) values
     (1, 1, 100),
