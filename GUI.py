@@ -23,6 +23,8 @@ orderItemsFrame = Frame(root)
 createItemsFrame = Frame(root)
 addItemsFrame = Frame(root)
 createOrderFrame = Frame(root)
+addressFrame = Frame(root)
+addAddressFrame = Frame(root)
 
 sv_ttk.set_theme("dark")
 title = ("Arial", 25)
@@ -79,36 +81,109 @@ def main():
                                            mainFrame.grid_forget(),
                                            item()],
                           style='my.TButton')
-    items_button.grid(row=0, column=0, pady=(50, 0))
+    items_button.grid(row=0, column=0, pady=(55, 0))
 
     warehouses_button = ttk.Button(mainFrame, text="Warehouses",
                                command=lambda: [warehousesFrame.grid(),
                                                 mainFrame.grid_forget(),
                                                 warehouse()],
                                style='my.TButton')
-    warehouses_button.grid(row=1, column=0, pady=(75, 0))
+    warehouses_button.grid(row=1, column=0, pady=(55, 0))
 
     orders_button = ttk.Button(mainFrame, text="Orders",
                            command=lambda: [ordersFrame.grid(),
                                             mainFrame.grid_forget(),
                                             orders()],
                            style='my.TButton')
-    orders_button.grid(row=2, column=0, pady=(75, 0))
+    orders_button.grid(row=2, column=0, pady=(55, 0))
 
     employees_button = ttk.Button(mainFrame, text="Employees",
                               command=lambda: [employeesFrame.grid(),
                                                mainFrame.grid_forget(),
                                                employee()],
                               style='my.TButton')
-    employees_button.grid(row=3, column=0, pady=(75, 0))
+    employees_button.grid(row=3, column=0, pady=(55, 0))
+
+    address_button = ttk.Button(mainFrame, text="Addresses",
+                              command=lambda: [addressFrame.grid(),
+                                               mainFrame.grid_forget(),
+                                               address()],
+                              style='my.TButton')
+    address_button.grid(row=4, column=0, pady=(55, 0))
 
     log_out_button = ttk.Button(mainFrame, text="Log Out",
                            command=lambda: [loginFrame.grid(),
                                             mainFrame.grid_forget(),
                                             login()],
                            style='my.TButton')
-    log_out_button.grid(row=4, column=0, pady=(75, 0))
+    log_out_button.grid(row=5, column=0, pady=(55, 0))
 
+def address():
+    def delete():
+        pass
+
+    label = Label(addressFrame, text="", font=title)
+    label.grid(row=0, column=0, pady=(0, 50))
+
+    box = ttk.Treeview(addressFrame, selectmode="browse")
+    box.grid(row=1, column=0, pady=(0, 0))
+
+    scroll = ttk.Scrollbar(addressFrame, orient="vertical", command=box.yview)
+    scroll.grid(row=1, column=1, pady=(0, 0), sticky="ns")
+
+    box.configure(yscrollcommand=scroll.set)
+    box["columns"] = ("1", "2", "3", "4", "5", "6")
+    box['show'] = 'headings'
+
+    box.column("1", width=100)
+    box.column("2", width=100)
+    box.column("3", width=200)
+    box.column("4", width=125)
+    box.column("5", width=100)
+    box.column("6", width=100)
+
+
+    box.heading("1", text="Order ID")
+    box.heading("2", text="Status")
+    box.heading("3", text="Departure Time")
+    box.heading("4", text="Delivery Address ID")
+    box.heading("5", text="Handler ID")
+    box.heading("6", text="Handler ID")
+
+    label = Label(addressFrame, text="Address ID", font=text)
+    label.grid(row=2, column=0, pady=(30, 0))
+
+    user_enter = Entry(addressFrame, font=entry)
+    user_enter.grid(row=3, column=0, pady=(0, 30))
+
+    back_button = ttk.Button(addressFrame, text="Delete",
+                         command=lambda: [delete()],
+                         style='my.TButton')
+    back_button.grid(row=4, column=0, pady=(0, 50))
+
+    back_button = ttk.Button(addressFrame, text="Create",
+                         command=lambda: [addAddressFrame.grid(),
+                                          addressFrame.grid_forget(),
+                                          clear_frame(addressFrame),
+                                          add_address()],
+                         style='my.TButton')
+    back_button.grid(row=5, column=0, pady=(0, 50))
+
+    back_button = ttk.Button(addressFrame, text="Back",
+                         command=lambda: [mainFrame.grid(),
+                                          addressFrame.grid_forget(),
+                                          clear_frame(addressFrame)],
+                         style='my.TButton')
+    back_button.grid(row=7, column=0, pady=(0, 50))
+
+def add_address():
+    back_button = ttk.Button(addAddressFrame, text="Back",
+                         command=lambda: [addressFrame.grid(),
+                                          addAddressFrame.grid_forget(),
+                                          clear_frame(addAddressFrame),
+                                          address()],
+                         style='my.TButton')
+    back_button.grid(row=7, column=0, pady=(0, 50))
 def orders():
     def del_order():
         requests.delete("http://127.0.0.1:105/orders/delete_order", json={"orderID": user_enter.get()})
