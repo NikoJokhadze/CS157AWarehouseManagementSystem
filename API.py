@@ -8,7 +8,7 @@ from getpass import getpass
 
 try:  # Surrounding the connection in a try-except block to catch all connection errors
     # password = getpass("Enter your password for MySQL: ")
-    conn = mysql.connector.connect(user="root", password="mati11a",
+    conn = mysql.connector.connect(user="root", password="NikoMySQL_13",
                                    host='127.0.0.1', database="WarehouseSystem")
 except mysql.connector.Error as err:
     if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:  # If the username or password is wrong, it's caught here
@@ -470,7 +470,7 @@ def delete_item_from_order():
                        (warehouseID, itemID))
         existing_quantity = cursor.fetchone()
         if existing_quantity is None:
-            return jsonify({'message': 'Item not found in the specified warehouse.'}), 404
+            return jsonify({'message': 'Item not found in specified warehouse.'}), 404
 
         # Retrieve the quantity of the deleted item from the order
         cursor.execute("SELECT itemQuantity FROM ItemsOrdered WHERE orderID = %s AND itemID = %s", (orderID, itemID))
