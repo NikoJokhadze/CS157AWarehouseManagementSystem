@@ -126,7 +126,7 @@ def address(temp):
         address(response)
 
     label = Label(addressFrame, text="", font=title)
-    label.grid(row=0, column=0, pady=(0, 50))
+    label.grid(row=0, column=0, pady=(0, 25))
 
     box = ttk.Treeview(addressFrame, selectmode="browse")
     box.grid(row=1, column=0, pady=(0, 0))
