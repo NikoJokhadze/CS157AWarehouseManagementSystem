@@ -369,8 +369,7 @@ def order_items(temp,error):
                                        "warehouseID": ware_enter.get()})
         response = json.loads(response.text)
         clear_frame(ordersFrame)
-        label_response.config(text=response["message"])
-        order_items(temp)
+        order_items(temp, response)
 
     label = Label(orderItemsFrame, text=f"Order {temp}", font=title)
     label.grid(row=0, column=0, pady=(0, 20))
