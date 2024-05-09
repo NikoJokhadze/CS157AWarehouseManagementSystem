@@ -8,7 +8,7 @@ import sv_ttk
 
 root = Tk()
 root.geometry("900x750")
-root.resizable(False, False)
+root.resizable(False, True)
 
 loginFrame = Frame(root)
 mainFrame = Frame(root)
