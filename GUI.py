@@ -274,7 +274,7 @@ def orders():
     user_enter = Entry(ordersFrame, font=entry)
     user_enter.grid(row=3, column=0, pady=(0, 25))
 
-    search_button = ttk.Button(ordersFrame, text="Search Items",
+    search_button = ttk.Button(ordersFrame, text="Inspect Order",
                                command=lambda: [orderItemsFrame.grid(),
                                                 ordersFrame.grid_forget(),
                                                 order_items(user_enter.get(),{'message':""}),
