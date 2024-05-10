@@ -75,7 +75,7 @@ create table if not exists Employee (
 -- This table stores the login information to access the system
 create table if not exists Login (
     username varchar(99) not null,
-    hashedPassword varchar(256) not null, -- For security purposes, we store the hashed password
+    hashedPassword varchar(256) not null,
     employeeID int not null,
     foreign key (employeeID) references Employee(employeeID)
 );
